@@ -1,4 +1,4 @@
-import type { SiteConfig } from "@/types";
+import type { SiteConfig, SocialLink } from "@/types";
 import type { AstroExpressiveCodeOptions } from "astro-expressive-code";
 
 export const siteConfig: SiteConfig = {
@@ -12,8 +12,7 @@ export const siteConfig: SiteConfig = {
 			year: "numeric",
 		},
 	},
-	description:
-		"Um starter minimalista em Astro para blog pessoal, com MDX, RSS, SEO e foco na leitura.",
+	description: "um site onde eu escrevo coisas que passam na minha mente",
 	lang: "pt-BR",
 	ogLocale: "pt_BR",
 	sortPostsByUpdatedDate: false,
@@ -28,6 +27,14 @@ export const siteConfig: SiteConfig = {
 		avatar: "/avatar.png",
 	},
 };
+
+export const socials: SocialLink[] = [
+	{ name: "Twitter", url: "https://x.com/xth0w", icon: "simple-icons:x" },
+	{ name: "Instagram", url: "https://instagram.com/xth0w", icon: "simple-icons:instagram" },
+	{ name: "Reddit", url: "https://reddit.com/user/xth0w", icon: "simple-icons:reddit" },
+	{ name: "guns.lol", url: "https://guns.lol/xth0w", icon: "lucide:link" },
+	{ name: "Email", url: "mailto:hello@thom.wtf", icon: "lucide:mail" },
+];
 
 export const menuLinks: { path: string; title: string }[] = [
 	{

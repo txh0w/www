@@ -3,6 +3,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import expressiveCode from "astro-expressive-code";
+import icon from "astro-icon";
 import webmanifest from "astro-webmanifest";
 import { unified } from "@astrojs/markdown-remark";
 import { defineConfig } from "astro/config";
@@ -48,6 +49,7 @@ export default defineConfig({
 					}),
 				]
 			: []),
+		icon(),
 		expressiveCode(expressiveCodeOptions),
 		sitemap({
 			changefreq: "weekly",

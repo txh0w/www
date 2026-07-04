@@ -70,23 +70,43 @@ const readingTime: string =
 				<div class="post-eyebrow">{eyebrowDate}</div>
 				{draft && <span class="draft-flag">(Rascunho)</span>}
 				<h1 class="post-title">{title}</h1>
-				<p class="byline">
+				<div class="post-meta">
+					<p class="byline">
+						{
+							authorName && (
+								<>
+									por {authorName.toLowerCase()}
+									<span class="sep">·</span>
+								</>
+							)
+						}{bylineDate}{
+							readingTime && (
+								<>
+									<span class="sep">·</span>
+									{readingTime}
+								</>
+							)
+						}
+					</p>
+
 					{
-						authorName && (
-							<>
-								Por {authorName}
-								<span class="sep">·</span>
-							</>
-						)
-					}{bylineDate}{
-						readingTime && (
-							<>
-								<span class="sep">·</span>
-								{readingTime}
-							</>
+						siteConfig.profile?.avatar && (
+							<div class="author-card">
+								<img
+									src={siteConfig.profile.avatar}
+									alt={authorName}
+									class="author-avatar"
+									width="40"
+									height="40"
+								/>
+								<div class="author-info">
+									<span class="author-name">{authorName.toLowerCase()}</span>
+									<span class="author-role">escrevendo ideias da minha mente...</span>
+								</div>
+							</div>
 						)
 					}
-				</p>
+				</div>
 				{
 					!!tags?.length && (
 						<div class="post-tags">
@@ -258,6 +278,49 @@ const readingTime: string =
 		font-style: normal;
 	}
 
+	.post-meta {
+		margin-bottom: 36px;
+	}
+
+	.author-card {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding-top: 14px;
+		border-top: 1px solid var(--hairline);
+		max-width: fit-content;
+	}
+
+	.author-avatar {
+		width: 40px;
+		height: 40px;
+		border-radius: 999px;
+		object-fit: cover;
+		border: 1px solid var(--hairline);
+		background: var(--paper);
+	}
+
+	.author-info {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.author-name {
+		font-family: var(--font-serif);
+		font-size: 15px;
+		font-style: italic;
+		color: hsl(var(--theme-text));
+	}
+
+	.author-role {
+		font-family: var(--font-mono);
+		font-size: 11px;
+		letter-spacing: 0.08em;
+		text-transform: lowercase;
+		color: hsl(var(--theme-text) / 0.55);
+	}
+
 	.post-tags {
 		font-family: var(--font-mono);
 		font-size: 11.5px;
@@ -270,7 +333,6 @@ const readingTime: string =
 		color: var(--faint);
 		margin: 0 6px;
 	}
-
 
 	.rule {
 		height: 1px;

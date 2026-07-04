@@ -1,7 +1,7 @@
 ---
 import { getEntry, render } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
-import { siteConfig } from "@/site-config";
+import { siteConfig, socials } from "@/site-config";
 import { absoluteUrl } from "@/utils/path";
 import { Schema } from "astro-seo-schema";
 
@@ -17,12 +17,9 @@ const meta = {
 	title: entry.data.title,
 };
 
-const personSameAs = [
-	profile?.linkedin,
-	profile?.github,
-	profile?.twitter,
-	profile?.mastodon,
-].filter((s): s is string => Boolean(s));
+const personSameAs = socials
+	.filter((s) => !s.url.startsWith("mailto:"))
+	.map((s) => s.url);
 
 const avatarUrl = profile?.avatar ? absoluteUrl(profile.avatar, Astro.site) : undefined;
 ---
@@ -61,6 +58,11 @@ const avatarUrl = profile?.avatar ? absoluteUrl(profile.avatar, Astro.site) : un
 <PageLayout meta={meta}>
 	<section class="about" aria-labelledby="about-label">
 		<div class="section-label" id="about-label">Sobre</div>
+		{
+			profile?.avatar && (
+				<img src={profile.avatar} alt={authorName} class="avatar" width="72" height="72" />
+			)
+		}
 		<div class="bio">
 			<Content />
 		</div>
@@ -70,6 +72,10 @@ const avatarUrl = profile?.avatar ? absoluteUrl(profile.avatar, Astro.site) : un
 <style>
 	.about {
 		margin-bottom: 64px;
+	}
+	.about .avatar {
+		border-radius: 999px;
+		margin-bottom: 24px;
 	}
 	.bio {
 		font-family: var(--font-serif);
