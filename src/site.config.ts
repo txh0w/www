@@ -2,9 +2,10 @@ import type { SiteConfig } from "@/types";
 import type { AstroExpressiveCodeOptions } from "astro-expressive-code";
 
 export const siteConfig: SiteConfig = {
-	author: "Your Name",
+	author: "Seu Nome",
+	siteUrl: "https://example.com",
 	date: {
-		locale: "en-US",
+		locale: "pt-BR",
 		options: {
 			day: "numeric",
 			month: "short",
@@ -12,12 +13,14 @@ export const siteConfig: SiteConfig = {
 		},
 	},
 	description:
-		"A minimal personal blog & writing space, built with Astro. Notes on whatever I happen to be thinking about — usually some mix of code, design, and the occasional half-formed idea. Replace this paragraph in src/site.config.ts to make the site your own.",
-	lang: "en-US",
-	ogLocale: "en_US",
+		"Um starter minimalista em Astro para blog pessoal, com MDX, RSS, SEO e foco na leitura.",
+	lang: "pt-BR",
+	ogLocale: "pt_BR",
 	sortPostsByUpdatedDate: false,
-	title: "Astro Sienna",
+	title: "Blog Astro",
 	hideThemeCredit: false,
+	// Handle do X/Twitter usado em twitter:site (ex: "@seublog"). Deixe undefined se não tiver.
+	twitterHandle: undefined,
 	profile: {
 		name: "John Doe",
 		email: "john@example.com",
@@ -34,15 +37,15 @@ export const siteConfig: SiteConfig = {
 export const menuLinks: { path: string; title: string }[] = [
 	{
 		path: "/",
-		title: "Home",
+		title: "Início",
 	},
 	{
 		path: "/posts/",
-		title: "Posts",
+		title: "Publicações",
 	},
 	{
 		path: "/about/",
-		title: "About",
+		title: "Sobre",
 	},
 ];
 

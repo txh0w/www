@@ -13,7 +13,7 @@ const profile = siteConfig.profile;
 const authorName = profile?.name ?? siteConfig.author;
 
 const meta = {
-	description: entry.data.description ?? `${authorName} — about me.`,
+	description: entry.data.description ?? `${authorName} — sobre mim.`,
 	title: entry.data.title,
 };
 
@@ -60,7 +60,7 @@ const avatarUrl = profile?.avatar ? absoluteUrl(profile.avatar, Astro.site) : un
 
 <PageLayout meta={meta}>
 	<section class="about" aria-labelledby="about-label">
-		<div class="section-label" id="about-label">About</div>
+		<div class="section-label" id="about-label">Sobre</div>
 		<div class="bio">
 			<Content />
 		</div>
@@ -106,7 +106,9 @@ const avatarUrl = profile?.avatar ? absoluteUrl(profile.avatar, Astro.site) : un
 		text-decoration-color: hsl(var(--theme-text) / 0.35);
 		text-decoration-thickness: 1px;
 		text-underline-offset: 3px;
-		transition: color 0.2s ease, text-decoration-color 0.2s ease;
+		transition:
+			color 0.2s ease,
+			text-decoration-color 0.2s ease;
 	}
 	.bio :global(a:hover) {
 		color: hsl(var(--theme-accent));

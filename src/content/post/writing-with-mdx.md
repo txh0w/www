@@ -5,8 +5,6 @@ description: "Posts can also be .mdx — same frontmatter, but with imports, JSX
 tags: [guide, writing, mdx]
 ---
 
-import { siteConfig } from "@/site-config";
-
 Everything from [Writing with markdown](/posts/writing-with-markdown/) still applies. The frontmatter schema is shared,
 the layout is identical, OG images and reading progress all work the same. MDX only adds: imports at the top, JS
 expressions in `{ ... }`, and the ability to render components inline.

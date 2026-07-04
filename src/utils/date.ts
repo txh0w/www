@@ -1,21 +1,21 @@
-const railFormatter = new Intl.DateTimeFormat("en-US", {
+const railFormatter = new Intl.DateTimeFormat("pt-BR", {
 	day: "numeric",
 	month: "short",
 	year: "numeric",
 });
 
-const stampFormatter = new Intl.DateTimeFormat("en-US", {
+const stampFormatter = new Intl.DateTimeFormat("pt-BR", {
 	month: "long",
 	year: "numeric",
 });
 
-const bylineFormatter = new Intl.DateTimeFormat("en-GB", {
+const bylineFormatter = new Intl.DateTimeFormat("pt-BR", {
 	day: "numeric",
 	month: "long",
 	year: "numeric",
 });
 
-const eyebrowFormatter = new Intl.DateTimeFormat("en-US", {
+const eyebrowFormatter = new Intl.DateTimeFormat("pt-BR", {
 	month: "long",
 	year: "numeric",
 });

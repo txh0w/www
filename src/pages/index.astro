@@ -2,7 +2,6 @@
 import { getAllPosts, getPostSortDate, sortMDByDate } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 import { siteConfig } from "@/site-config";
-import { formatRailDate, formatStampDate } from "@/utils/date";
 import { absoluteUrl, withBase } from "@/utils/path";
 import { Schema } from "astro-seo-schema";
 
@@ -26,27 +25,28 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 			{
 				"@type": "ListItem",
 				position: 1,
-				name: "Home",
+				name: "Início",
 				item: siteUrl("/"),
 			},
 			{
 				"@type": "ListItem",
 				position: 2,
-				name: "About",
+				name: "Sobre",
 				item: siteUrl("/about"),
 			},
 			{
 				"@type": "ListItem",
 				position: 3,
-				name: "Posts",
+				name: "Publicações",
 				item: siteUrl("/posts"),
 			},
 		],
 	}}
 />
 
-<PageLayout meta={{ title: "Home", description: siteConfig.description }}>
+<PageLayout meta={{ title: "Início", description: siteConfig.description }}>
 	<section class="hero">
+		<h1>escritos, notas e ideias</h1>
 		<p>{siteConfig.description}</p>
 		<div class="socials">
 			{
@@ -82,7 +82,7 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 	</section>
 
 	<section class="writing" aria-labelledby="writing-label">
-		<div class="section-label" id="writing-label">Writing</div>
+		<div class="section-label" id="writing-label">Escritos</div>
 		<div class="timeline">
 			{
 				featured && (
@@ -94,12 +94,14 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 					>
 						<div class="post-rail">
 							<time class="post-date" datetime={getPostSortDate(featured).toISOString()}>
-								{formatRailDate(getPostSortDate(featured))}
+								{getPostSortDate(featured).toLocaleDateString("pt-PT")}
 							</time>
 							<span class="post-dot" aria-hidden="true" />
 						</div>
 						<div class="post-body">
-							<div class="post-stamp">Latest · {formatStampDate(getPostSortDate(featured))}</div>
+							<div class="post-stamp">
+								Último · {getPostSortDate(featured).toLocaleDateString("pt-PT")}
+							</div>
 							<h2 class="post-title">{featured.data.title}</h2>
 							<p class="post-excerpt">{featured.data.description}</p>
 							{!!featured.data.tags?.length && (
@@ -127,7 +129,7 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 					>
 						<div class="post-rail">
 							<time class="post-date" datetime={getPostSortDate(p).toISOString()}>
-								{formatRailDate(getPostSortDate(p))}
+								{getPostSortDate(p).toLocaleDateString("pt-PT")}
 							</time>
 							<span class="post-dot" aria-hidden="true" />
 						</div>
@@ -140,7 +142,9 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 			}
 
 			<div class="archive-link" style={`--i: ${rest.length + 1}`}>
-				<a data-astro-prefetch href={withBase("/posts/")}>View all {archiveCount} posts →</a>
+				<a data-astro-prefetch href={withBase("/posts/")}
+					>Ver todas as {archiveCount} publicações →</a
+				>
 			</div>
 		</div>
 	</section>
@@ -151,8 +155,16 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 	.hero {
 		margin-bottom: 76px;
 	}
+	.hero h1 {
+		font-size: clamp(2.2rem, 6vw, 4.2rem);
+		line-height: 0.95;
+		letter-spacing: -0.05em;
+		margin: 0 0 20px;
+		font-weight: 700;
+		text-wrap: balance;
+	}
 	.hero p {
-		font-size: 19.5px;
+		font-size: 18px;
 		line-height: 1.65;
 		color: hsl(var(--theme-text));
 		margin: 0 0 22px;
@@ -202,7 +214,7 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 		margin-bottom: 12px;
 	}
 	.post.featured .post-title {
-		font-size: 30px;
+		font-size: clamp(1.8rem, 4vw, 2.4rem);
 		line-height: 1.14;
 		margin-bottom: 14px;
 		letter-spacing: -0.02em;
@@ -253,11 +265,13 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 		text-underline-offset: 3px;
 		transition:
 			color 0.2s ease,
-			text-decoration-color 0.2s ease;
+			text-decoration-color 0.2s ease,
+			transform 0.2s ease;
 	}
 	.archive-link a:hover {
 		color: hsl(var(--theme-accent));
 		text-decoration-color: hsl(var(--theme-accent));
+		transform: translateX(2px);
 	}
 
 	.socials a:focus-visible,

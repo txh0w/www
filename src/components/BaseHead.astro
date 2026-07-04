@@ -1,24 +1,32 @@
 ---
 import { siteConfig } from "@/site-config";
 import type { SiteMeta } from "@/types";
-import { absoluteUrl, withBase } from "@/utils/path";
+import { withBase } from "@/utils/path";
 import "../styles/global.css";
-
 import newsreaderLatin from "@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url";
 import interLatin from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import jetbrainsMonoLatin from "@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url";
 
 type Props = SiteMeta;
 
-const { articleDate, description, ogImage, title } = Astro.props;
+const { articleDate, description, title, noindex, ogImage: ogImageProp } = Astro.props;
 
-const titleSeparator = "|";
-const siteTitle = `${title} ${titleSeparator} ${siteConfig.title}`;
+const siteTitle = title === siteConfig.title ? title : `${title} · ${siteConfig.title}`;
+const pageDescription = description ?? siteConfig.description;
+
+if (!Astro.site) {
+	throw new Error(
+		"`site` não está configurado em astro.config.*. É necessário para gerar URLs absolutas de canonical/OG.",
+	);
+}
+
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = ogImageProp ?? new URL(
+	withBase(`/og-image${Astro.url.pathname.replace(/\/$/, "")}.png`),
+	Astro.site,
+).toString();
 
-const analytics = siteConfig.analytics;
-const gaId = analytics?.googleAnalyticsId;
-const goatcounter = analytics?.goatcounterUrl;
+const robotsContent = noindex ? "noindex,nofollow" : "index,follow";
 ---
 
 <meta charset="utf-8" />
@@ -35,14 +43,14 @@ const goatcounter = analytics?.goatcounterUrl;
 		</>
 	)
 }
-
 <link href={withBase("/manifest.webmanifest")} rel="manifest" />
-
 <link href={canonicalURL} rel="canonical" />
 
 <meta content={siteTitle} name="title" />
-<meta content={description} name="description" />
+<meta content={pageDescription} name="description" />
 <meta content={siteConfig.author} name="author" />
+<meta content={robotsContent} name="robots" />
+<meta content={robotsContent} name="googlebot" />
 
 <link rel="preload" as="font" type="font/woff2" href={newsreaderLatin} crossorigin />
 <link rel="preload" as="font" type="font/woff2" href={interLatin} crossorigin />
@@ -50,12 +58,16 @@ const goatcounter = analytics?.goatcounterUrl;
 
 <meta content="#131110" name="theme-color" />
 
+<!-- Open Graph -->
 <meta content={articleDate ? "article" : "website"} property="og:type" />
 <meta content={title} property="og:title" />
-<meta content={description} property="og:description" />
+<meta content={pageDescription} property="og:description" />
 <meta content={canonicalURL} property="og:url" />
 <meta content={siteConfig.title} property="og:site_name" />
 <meta content={siteConfig.ogLocale} property="og:locale" />
+<meta content={ogImage} property="og:image" />
+<meta content="image/png" property="og:image:type" />
+<meta content={siteTitle} property="og:image:alt" />
 <meta content="1200" property="og:image:width" />
 <meta content="630" property="og:image:height" />
 {
@@ -67,12 +79,14 @@ const goatcounter = analytics?.goatcounterUrl;
 	)
 }
 
-<meta content="summary_large_image" property="twitter:card" />
-<meta content={canonicalURL} property="twitter:url" />
-<meta content={title} property="twitter:title" />
-<meta content={description} property="twitter:description" />
-
-<link href={withBase("/sitemap-index.xml")} rel="sitemap" />
+<!-- Twitter / X Card -->
+<meta content="summary_large_image" name="twitter:card" />
+<meta content={canonicalURL} name="twitter:url" />
+<meta content={title} name="twitter:title" />
+<meta content={pageDescription} name="twitter:description" />
+<meta content={ogImage} name="twitter:image" />
+<meta content={siteTitle} name="twitter:image:alt" />
+{siteConfig.twitterHandle && <meta content={siteConfig.twitterHandle} name="twitter:site" />}
 
 <link
 	href={withBase("/rss.xml")}
@@ -82,37 +96,3 @@ const goatcounter = analytics?.goatcounterUrl;
 />
 
 <meta content={Astro.generator} name="generator" />
-
-{
-	gaId && (
-		<>
-			<script
-				is:inline
-				type="text/partytown"
-				async
-				src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-			/>
-			<script
-				is:inline
-				type="text/partytown"
-				set:html={`
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', '${gaId}');
-`}
-			/>
-		</>
-	)
-}
-{
-	goatcounter && (
-		<script
-			is:inline
-			type="text/partytown"
-			data-goatcounter={goatcounter}
-			async
-			src="//gc.zgo.at/count.js"
-		/>
-	)
-}

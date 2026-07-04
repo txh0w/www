@@ -46,6 +46,8 @@ export interface AnalyticsConfig {
 export interface SiteConfig {
 	/** Site-wide display name; fallback for profile.name. */
 	author: string;
+	/** Canonical site URL, used to build absolute URLs (OG, canonical, RSS). */
+	siteUrl: string;
 	date: {
 		locale: string | string[] | undefined;
 		options: Intl.DateTimeFormatOptions;
@@ -65,6 +67,8 @@ export interface SiteConfig {
 		link: string;
 		pingback?: string;
 	};
+	/** X/Twitter handle for twitter:site meta tag, e.g. "@seublog". Omit to skip the tag. */
+	twitterHandle?: string;
 	hideThemeCredit?: boolean;
 }
 
@@ -73,6 +77,8 @@ export interface SiteMeta {
 	description?: string;
 	ogImage?: string | undefined;
 	title: string;
+	/** Sets robots/googlebot to "noindex,nofollow" when true. Use for drafts or private pages. */
+	noindex?: boolean;
 }
 
 export type AdmonitionType = "tip" | "note" | "important" | "caution" | "warning";

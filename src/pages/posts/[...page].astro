@@ -2,7 +2,6 @@
 import type { CollectionEntry } from "astro:content";
 import { getAllPosts, getPostSortDate, sortMDByDate } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
-import { formatRailDate } from "@/utils/date";
 import { withBase } from "@/utils/path";
 import type { GetStaticPaths, Page } from "astro";
 
@@ -20,20 +19,20 @@ interface Props {
 const { page } = Astro.props;
 
 const meta = {
-	description: "Read my collection of posts and the things that interest me",
-	title: "Posts",
+	description: "Leia minha coleção de publicações e os temas que me interessam",
+	title: "Publicações",
 };
 
 const paginationProps = {
 	...(page.url.prev && {
 		prevUrl: {
-			text: "← Previous",
+			text: "← Anterior",
 			url: page.url.prev,
 		},
 	}),
 	...(page.url.next && {
 		nextUrl: {
-			text: "Next →",
+			text: "Próxima →",
 			url: page.url.next,
 		},
 	}),
@@ -44,7 +43,7 @@ const totalCount = page.total;
 
 <PageLayout meta={meta}>
 	<section class="writing" aria-labelledby="writing-label">
-		<div class="section-label" id="writing-label">Writing · {totalCount} posts</div>
+		<div class="section-label" id="writing-label">{totalCount} textos</div>
 		<div class="timeline">
 			{
 				page.data.map((p, idx) => (
@@ -56,7 +55,7 @@ const totalCount = page.total;
 					>
 						<div class="post-rail">
 							<time class="post-date" datetime={getPostSortDate(p).toISOString()}>
-								{formatRailDate(getPostSortDate(p))}
+								{getPostSortDate(p).toLocaleDateString("pt-PT")}
 							</time>
 							<span class="post-dot" aria-hidden="true" />
 						</div>
@@ -70,7 +69,7 @@ const totalCount = page.total;
 		</div>
 		{
 			(paginationProps.prevUrl || paginationProps.nextUrl) && (
-				<nav class="pagination" aria-label="Pagination">
+				<nav class="pagination" aria-label="Paginação">
 					{paginationProps.prevUrl && (
 						<a class="pag-link prev" data-astro-prefetch href={paginationProps.prevUrl.url}>
 							{paginationProps.prevUrl.text}
@@ -89,12 +88,12 @@ const totalCount = page.total;
 
 <style>
 	.writing {
-		margin-bottom: 96px;
+		margin-bottom: 72px;
 	}
 
 	.pagination {
 		grid-column: 2;
-		margin-top: 8px;
+		margin-top: 32px;
 		display: flex;
 		gap: 24px;
 		align-items: center;
@@ -104,8 +103,8 @@ const totalCount = page.total;
 		display: inline-block;
 		padding: 8px 4px;
 		font-family: var(--font-mono);
-		font-size: 11.5px;
-		letter-spacing: 0.04em;
+		font-size: 11px;
+		letter-spacing: 0.12em;
 		text-transform: uppercase;
 		color: hsl(var(--theme-text-muted));
 		text-decoration: underline;
@@ -114,7 +113,8 @@ const totalCount = page.total;
 		text-underline-offset: 3px;
 		transition:
 			color 0.2s ease,
-			text-decoration-color 0.2s ease;
+			text-decoration-color 0.2s ease,
+			transform 0.2s ease;
 	}
 	.pag-link.prev {
 		margin-right: auto;
@@ -125,6 +125,10 @@ const totalCount = page.total;
 	.pag-link:hover {
 		color: hsl(var(--theme-accent));
 		text-decoration-color: hsl(var(--theme-accent));
+		transform: translateX(2px);
+	}
+	.pag-link.next:hover {
+		transform: translateX(-2px);
 	}
 	.pag-link:focus-visible {
 		outline: 2px solid hsl(var(--theme-accent));
@@ -140,7 +144,7 @@ const totalCount = page.total;
 
 	@media (max-width: 420px) {
 		.writing {
-			margin-bottom: 64px;
+			margin-bottom: 48px;
 		}
 	}
 </style>
