@@ -28,7 +28,7 @@ const analytics = siteConfig.analytics;
 const hasAnalytics = analytics?.googleAnalyticsId || analytics?.goatcounterUrl;
 
 export default defineConfig({
-	site: "https://anjaygoel.github.io",
+	site: "https://thom.wtf",
 	base: BASE_PATH,
 	image: {
 		domains: ["webmention.io"],

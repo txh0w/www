@@ -166,20 +166,25 @@ const { url } = Astro.props;
 		let resetTimeout: ReturnType<typeof setTimeout> | undefined;
 
 		const copyFallback = (text: string) => {
-			const input = document.createElement("input");
-			input.value = text;
-			input.setAttribute("readonly", "");
-			input.style.position = "fixed";
-			input.style.opacity = "0";
-			document.body.appendChild(input);
-			input.select();
+			const textarea = document.createElement("textarea");
+			textarea.value = text;
+			textarea.setAttribute("readonly", "");
+			textarea.style.position = "fixed";
+			textarea.style.opacity = "0";
+			document.body.appendChild(textarea);
+			textarea.select();
+
+			let success = false;
+
 			try {
-				document.execCommand("copy");
+				success = document.execCommand("copy");
 			} catch {
-				// Sem suporte a cópia; falha silenciosa é aceitável aqui.
+				success = false;
 			} finally {
-				input.remove();
+				textarea.remove();
 			}
+
+			return success;
 		};
 
 		btn.addEventListener("click", async () => {

@@ -24,12 +24,12 @@ function h(
 }
 
 const COLORS = {
-	bg: "#1a1715",
-	accent: "#c89761",
-	title: "#fbf6ec",
-	byline: "#a89c8a",
-	host: "#6b5e4f",
-	border: "#2c2723",
+	bg: "#171c18",
+	accent: "#79a685",
+	title: "#f0ede4",
+	byline: "#aeb8b0",
+	host: "#7f8f83",
+	border: "#252d27",
 } as const;
 
 const titleClass = (title: string) =>

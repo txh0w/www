@@ -2,8 +2,8 @@ import type { SiteConfig } from "@/types";
 import type { AstroExpressiveCodeOptions } from "astro-expressive-code";
 
 export const siteConfig: SiteConfig = {
-	author: "Seu Nome",
-	siteUrl: "https://example.com",
+	author: "Thom",
+	siteUrl: "https://thom.wtf",
 	date: {
 		locale: "pt-BR",
 		options: {
@@ -17,19 +17,14 @@ export const siteConfig: SiteConfig = {
 	lang: "pt-BR",
 	ogLocale: "pt_BR",
 	sortPostsByUpdatedDate: false,
-	title: "Blog Astro",
+	title: "thom's space",
 	hideThemeCredit: false,
 	// Handle do X/Twitter usado em twitter:site (ex: "@seublog"). Deixe undefined se não tiver.
-	twitterHandle: undefined,
+	twitterHandle: "@xth0w",
 	profile: {
-		name: "John Doe",
-		email: "john@example.com",
-		github: "https://github.com/example",
-		linkedin: "https://www.linkedin.com/in/example/",
-		jobTitle: "Software Engineer",
-		employer: "Example Inc.",
-		employerUrl: "https://example.com",
-		alumni: "Example University",
+		name: "Thom",
+		email: "hello@thom.wtf",
+		github: "https://github.com/xth0w",
 		avatar: "/avatar.png",
 	},
 };

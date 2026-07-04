@@ -88,7 +88,7 @@ export async function getStaticPaths() {
 			const readingTime = (remarkPluginFrontmatter as { minutesRead?: string })?.minutesRead ?? "";
 
 			return {
-				params: { slug: String(post.id) },
+				params: { slug: `posts/${post.id}` },
 				props: {
 					pubDate: (post.data.updatedDate ?? post.data.publishDate).toISOString(),
 					title: post.data.title,
@@ -98,5 +98,6 @@ export async function getStaticPaths() {
 			};
 		}),
 	);
+
 	return items;
 }
