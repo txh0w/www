@@ -1,42 +1,71 @@
 content:
   - name: posts
-    label: Posts
+    label: Blog Posts
     path: src/content/posts
     type: collection
+    filename: "{primary}.md"
+    view:
+      fields: [title, date, draft]
+      primary: title
+      sort: [date, desc]
     fields:
       - name: title
-        label: Title
+        label: Título
         type: string
         required: true
+
+      - name: description
+        label: Descrição
+        type: string
+        required: true
+
       - name: date
-        label: Date
+        label: Data de publicação
         type: date
         required: true
-      - name: description
-        label: Description
-        type: string
+
+      - name: draft
+        label: Rascunho
+        type: boolean
+        default: false
+
       - name: image
-        label: Image
+        label: Imagem de capa
         type: image
+
       - name: tags
         label: Tags
         type: string
         list: true
+
+      - name: body
+        label: Conteúdo
+        type: rich-text
+
   - name: pages
-    label: Pages
+    label: Páginas
     path: src/content/pages
     type: collection
+    filename: "{primary}.md"
+    view:
+      fields: [title]
+      primary: title
     fields:
       - name: title
-        label: Title
+        label: Título
         type: string
         required: true
+
       - name: description
-        label: Description
+        label: Descrição
         type: string
 
+      - name: body
+        label: Conteúdo
+        type: rich-text
+
 media:
-  - name: images
-    label: Images
-    path: public/images
-    type: folder
+
+  input: public/images
+
+  output: /images
