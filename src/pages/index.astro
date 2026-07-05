@@ -57,23 +57,34 @@ const featuredLabel = featuredDate ? featuredDate.toLocaleDateString("pt-PT") : 
 					<img
 						src={profile.avatar}
 						alt={siteConfig.author}
-						class="avatar h-14 w-14 flex-shrink-0 rounded-full border border-hairline object-cover motion-safe:transition-all motion-safe:duration-[0.2s] motion-safe:ease hover:-translate-y-px hover:border-accent max-[420px]:h-[46px] max-[420px]:w-[46px]" style="box-shadow: 0 0 0 3px hsl(var(--theme-bg))"
+						class="avatar border-hairline motion-safe:ease hover:border-accent h-14 w-14 flex-shrink-0 rounded-full border object-cover hover:-translate-y-px motion-safe:transition-all motion-safe:duration-[0.2s] max-[420px]:h-[46px] max-[420px]:w-[46px]"
+						style="box-shadow: 0 0 0 3px hsl(var(--theme-bg))"
 						width="56"
 						height="56"
 					/>
 				)
 			}
 			<div class="hero-title flex flex-col gap-1">
-				<h1 class="m-0 font-serif font-bold leading-[0.95] tracking-[-0.05em] text-text [text-wrap:balance]" style="font-size: clamp(2.2rem, 6vw, 4.2rem)">
+				<h1
+					class="text-text m-0 font-serif leading-[0.95] font-bold tracking-[-0.05em] [text-wrap:balance]"
+					style="font-size: clamp(2.2rem, 6vw, 4.2rem)"
+				>
 					{siteConfig.author}
 				</h1>
-				<span class="font-mono text-[10.5px] lowercase tracking-[0.12em] text-accent max-[420px]:text-[10px]">everything is going to be okay...</span>
+				<span
+					class="text-accent font-mono text-[10.5px] tracking-[0.12em] lowercase max-[420px]:text-[10px]"
+					>everything is going to be okay...</span
+				>
 			</div>
 		</div>
-		<p class="mb-[22px] mt-0 max-w-[60ch] text-[18px] leading-[1.65] text-text [text-wrap:pretty] [white-space:pre-line] max-[720px]:text-[18px] max-[420px]:text-[17px]">
+		<p
+			class="text-text mt-0 mb-[22px] max-w-[60ch] text-[18px] leading-[1.65] [text-wrap:pretty] [white-space:pre-line] max-[720px]:text-[18px] max-[420px]:text-[17px]"
+		>
 			{siteConfig.description}
 		</p>
-		<div class="socials mt-4 flex flex-wrap items-center gap-[10px] font-sans text-[13px] text-text/72 max-[420px]:text-[12.5px]">
+		<div
+			class="socials text-text/72 mt-4 flex flex-wrap items-center gap-[10px] font-sans text-[13px] max-[420px]:text-[12.5px]"
+		>
 			{
 				socials.map((s, i) => (
 					<>
@@ -82,7 +93,7 @@ const featuredLabel = featuredDate ? featuredDate.toLocaleDateString("pt-PT") : 
 							rel="noreferrer"
 							target="_blank"
 							aria-label={s.name}
-							class="text-text-muted motion-safe:transition-colors motion-safe:duration-[0.2s] motion-safe:ease hover:text-accent"
+							class="text-text-muted motion-safe:ease hover:text-accent motion-safe:transition-colors motion-safe:duration-[0.2s]"
 						>
 							<Icon name={s.icon} size={18} />
 						</a>
@@ -109,21 +120,24 @@ const featuredLabel = featuredDate ? featuredDate.toLocaleDateString("pt-PT") : 
 							</time>
 							<span class="post-dot" aria-hidden="true" />
 						</div>
-						<div class="post-body pb-14 max-md:border-b max-md:border-hairline max-md:pb-6 max-md:mb-1">
-							<div class="post-stamp mb-3 font-mono text-[10.5px] lowercase tracking-[0.12em] text-accent">
+						<div class="post-body max-md:border-hairline pb-14 max-md:mb-1 max-md:border-b max-md:pb-6">
+							<div class="post-stamp text-accent mb-3 font-mono text-[10.5px] tracking-[0.12em] lowercase">
 								mais recente · {featuredLabel}
 							</div>
-							<h2 class="post-title m-0 mb-[14px] font-medium leading-[1.14] tracking-[-0.03em] text-text [text-wrap:balance] [word-wrap:break-word] max-md:text-[22px] max-md:leading-[1.2] max-md:mb-[10px] max-md:tracking-[-0.015em] max-[420px]:text-[17px]" style="font-size: clamp(1.8rem, 4vw, 2.4rem)">
+							<h2
+								class="post-title text-text m-0 mb-[14px] leading-[1.14] font-medium tracking-[-0.03em] [text-wrap:balance] [word-wrap:break-word] max-[420px]:text-[17px] max-md:mb-[10px] max-md:text-[22px] max-md:leading-[1.2] max-md:tracking-[-0.015em]"
+								style="font-size: clamp(1.8rem, 4vw, 2.4rem)"
+							>
 								{featured.data.title}
 							</h2>
-							<p class="post-excerpt m-0 mb-4 max-w-[58ch] text-[18px] leading-[1.62] text-text-muted [word-wrap:break-word] [overflow-wrap:break-word] max-md:text-[15.5px] max-md:leading-[1.55] max-md:mb-[10px] max-[420px]:text-[15px]">
+							<p class="post-excerpt text-text-muted m-0 mb-4 max-w-[58ch] text-[18px] leading-[1.62] [overflow-wrap:break-word] [word-wrap:break-word] max-[420px]:text-[15px] max-md:mb-[10px] max-md:text-[15.5px] max-md:leading-[1.55]">
 								{featured.data.description}
 							</p>
 							{!!featured.data.tags?.length && (
-								<div class="post-meta font-mono text-[11.5px] text-text/72 [font-feature-settings:'tnum'] [font-variant-numeric:tabular-nums] max-md:text-[11px]">
+								<div class="post-meta text-text/72 font-mono [font-feature-settings:'tnum'] text-[11.5px] [font-variant-numeric:tabular-nums] max-md:text-[11px]">
 									{featured.data.tags.map((t, i) => (
 										<Fragment>
-											{i > 0 && <span class="dot mx-2 text-faint">·</span>}
+											{i > 0 && <span class="dot text-faint mx-2">·</span>}
 											<span>{t}</span>
 										</Fragment>
 									))}
@@ -156,11 +170,11 @@ const featuredLabel = featuredDate ? featuredDate.toLocaleDateString("pt-PT") : 
 				))
 			}
 
-			<div class="archive-link col-start-2 mt-2 font-sans text-[13.5px] text-text/72 max-md:mt-0">
+			<div class="archive-link text-text/72 col-start-2 mt-2 font-sans text-[13.5px] max-md:mt-0">
 				<a
 					data-astro-prefetch
 					href={withBase("/posts/")}
-					class="inline-block px-0 py-[6px] text-text-muted underline decoration-1 underline-offset-[3px] decoration-text/35 motion-safe:transition-all motion-safe:duration-[0.2s] motion-safe:ease hover:text-accent hover:decoration-accent hover:translate-x-0.5"
+					class="text-text-muted decoration-text/35 motion-safe:ease hover:text-accent hover:decoration-accent inline-block px-0 py-[6px] underline decoration-1 underline-offset-[3px] hover:translate-x-0.5 motion-safe:transition-all motion-safe:duration-[0.2s]"
 				>
 					ver todas as {archiveCount} publicações →
 				</a>

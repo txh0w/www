@@ -44,7 +44,8 @@ const totalCount = page.total;
 <PageLayout meta={meta}>
 	<section class="writing mb-[72px] max-[420px]:mb-12" aria-labelledby="writing-label">
 		<div class="section-label" id="writing-label">
-			{totalCount} {totalCount === 1 ? "texto" : "textos"}
+			{totalCount}
+			{totalCount === 1 ? "texto" : "textos"}
 		</div>
 		<div class="timeline">
 			{
@@ -75,10 +76,13 @@ const totalCount = page.total;
 		</div>
 		{
 			(paginationProps.prevUrl || paginationProps.nextUrl) && (
-				<nav class="pagination col-start-2 mt-10 flex items-center justify-between gap-6 border-t border-hairline pt-6 max-md:mt-6" aria-label="Paginação">
+				<nav
+					class="pagination border-hairline col-start-2 mt-10 flex items-center justify-between gap-6 border-t pt-6 max-md:mt-6"
+					aria-label="Paginação"
+				>
 					{paginationProps.prevUrl && (
 						<a
-							class="pag-link prev mr-auto inline-block px-1 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted underline decoration-1 underline-offset-[3px] decoration-text/35 motion-safe:transition-all motion-safe:duration-[0.2s] motion-safe:ease hover:text-accent hover:decoration-accent hover:translate-x-0.5"
+							class="pag-link prev text-text-muted decoration-text/35 motion-safe:ease hover:text-accent hover:decoration-accent mr-auto inline-block px-1 py-2 font-mono text-[11px] tracking-[0.12em] uppercase underline decoration-1 underline-offset-[3px] hover:translate-x-0.5 motion-safe:transition-all motion-safe:duration-[0.2s]"
 							data-astro-prefetch
 							href={paginationProps.prevUrl.url}
 						>
@@ -87,7 +91,7 @@ const totalCount = page.total;
 					)}
 					{paginationProps.nextUrl && (
 						<a
-							class="pag-link next ml-auto inline-block px-1 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted underline decoration-1 underline-offset-[3px] decoration-text/35 motion-safe:transition-all motion-safe:duration-[0.2s] motion-safe:ease hover:text-accent hover:decoration-accent hover:-translate-x-0.5"
+							class="pag-link next text-text-muted decoration-text/35 motion-safe:ease hover:text-accent hover:decoration-accent ml-auto inline-block px-1 py-2 font-mono text-[11px] tracking-[0.12em] uppercase underline decoration-1 underline-offset-[3px] hover:-translate-x-0.5 motion-safe:transition-all motion-safe:duration-[0.2s]"
 							data-astro-prefetch
 							href={paginationProps.nextUrl.url}
 						>

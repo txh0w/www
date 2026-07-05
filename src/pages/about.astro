@@ -58,7 +58,13 @@ const avatarUrl = profile?.avatar ? absoluteUrl(profile.avatar, Astro.site) : un
 		<div class="section-label" id="about-label">Sobre</div>
 		{
 			profile?.avatar && (
-				<img src={profile.avatar} alt={authorName} class="mb-6 rounded-full" width="72" height="72" />
+				<img
+					src={profile.avatar}
+					alt={authorName}
+					class="mb-6 rounded-full"
+					width="72"
+					height="72"
+				/>
 			)
 		}
 		<div class="bio prose prose-slate dark:prose-invert max-w-none font-serif">

@@ -29,25 +29,28 @@ export const siteConfig: SiteConfig = {
 };
 
 export const socials: SocialLink[] = [
-	{ name: "Twitter", url: "https://x.com/xth0w", icon: "simple-icons:x" },
-	{ name: "Instagram", url: "https://instagram.com/xth0w", icon: "simple-icons:instagram" },
-	{ name: "Reddit", url: "https://reddit.com/user/xth0w", icon: "simple-icons:reddit" },
-	{ name: "guns.lol", url: "https://guns.lol/xth0w", icon: "lucide:link" },
-	{ name: "Email", url: "mailto:hello@thom.wtf", icon: "lucide:mail" },
+	{ name: "X", url: "https://x.com/xth0w", icon: "simple-icons:x" },
+	{ name: "Instagram", url: "https://instagram.com/xth0w", icon: "ph:instagram-logo-duotone" },
+	{ name: "Reddit", url: "https://reddit.com/user/xth0w", icon: "ph:reddit-logo-duotone" },
+	{ name: "guns.lol", url: "https://guns.lol/xth0w", icon: "hugeicons:gun" },
+	{ name: "Email", url: "mailto:hello@thom.wtf", icon: "si:mail-duotone" },
 ];
 
-export const menuLinks: { path: string; title: string }[] = [
+export const menuLinks: { path: string; title: string; icon: string }[] = [
 	{
 		path: "/",
 		title: "Início",
+		icon: "lucide:house",
 	},
 	{
 		path: "/posts/",
 		title: "Publicações",
+		icon: "lucide:newspaper",
 	},
 	{
 		path: "/about/",
 		title: "Sobre",
+		icon: "lucide:circle-user",
 	},
 ];
 

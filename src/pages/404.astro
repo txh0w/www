@@ -10,17 +10,28 @@ const meta = {
 
 <PageLayout meta={meta}>
 	<section class="not-found max-w-[44ch] py-6 pb-20">
-		<div class="eyebrow mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-text/45">
+		<div
+			class="eyebrow text-text/45 mb-4 font-mono text-[11px] font-medium tracking-[0.18em] uppercase"
+		>
 			404
 		</div>
-		<h1 class="m-0 mb-3 font-serif font-normal leading-[1.12] tracking-[-0.02em] text-text" style="font-size: clamp(28px, 5vw, 40px)">
+		<h1
+			class="text-text m-0 mb-3 font-serif leading-[1.12] font-normal tracking-[-0.02em]"
+			style="font-size: clamp(28px, 5vw, 40px)"
+		>
 			não encontrado
 		</h1>
-		<p class="m-0 text-[16px] leading-[1.8] text-text">
+		<p class="text-text m-0 text-[16px] leading-[1.8]">
 			oops! a pagina que você ta procurando não existe
-			<a class="border-b border-accent/40 text-accent motion-safe:transition-colors motion-safe:duration-[0.2s] motion-safe:ease hover:border-accent hover:text-text" href={withBase("/")}>Início</a>
+			<a
+				class="border-accent/40 text-accent motion-safe:ease hover:border-accent hover:text-text border-b motion-safe:transition-colors motion-safe:duration-[0.2s]"
+				href={withBase("/")}>Início</a
+			>
 			·
-			<a class="border-b border-accent/40 text-accent motion-safe:transition-colors motion-safe:duration-[0.2s] motion-safe:ease hover:border-accent hover:text-text" href={withBase("/posts/")}>Arquivo</a>
+			<a
+				class="border-accent/40 text-accent motion-safe:ease hover:border-accent hover:text-text border-b motion-safe:transition-colors motion-safe:duration-[0.2s]"
+				href={withBase("/posts/")}>Arquivo</a
+			>
 		</p>
 	</section>
 </PageLayout>
