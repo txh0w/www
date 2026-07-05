@@ -1,9 +1,8 @@
 ---
 import { getAllPosts, getPostSortDate, sortMDByDate } from "@/data/post";
-import { showcase } from "@/data/showcase";
 import PageLayout from "@/layouts/Base.astro";
-import { siteConfig } from "@/site-config";
-import { formatRailDate, formatStampDate } from "@/utils/date";
+import { siteConfig, socials } from "@/site-config";
+import { Icon } from "astro-icon/components";
 import { absoluteUrl, withBase } from "@/utils/path";
 import { Schema } from "astro-seo-schema";
 
@@ -17,6 +16,10 @@ const archiveCount = allPosts.length;
 
 const profile = siteConfig.profile;
 const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
+
+const featuredDate = featured ? getPostSortDate(featured) : null;
+const featuredIso = featuredDate ? featuredDate.toISOString() : "";
+const featuredLabel = featuredDate ? featuredDate.toLocaleDateString("pt-PT") : "";
 ---
 
 <Schema
@@ -27,53 +30,81 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 			{
 				"@type": "ListItem",
 				position: 1,
-				name: "Home",
+				name: "Início",
 				item: siteUrl("/"),
 			},
 			{
 				"@type": "ListItem",
 				position: 2,
-				name: "About",
+				name: "Sobre",
 				item: siteUrl("/about"),
 			},
 			{
 				"@type": "ListItem",
 				position: 3,
-				name: "Posts",
+				name: "Publicações",
 				item: siteUrl("/posts"),
 			},
 		],
 	}}
 />
 
-<PageLayout meta={{ title: "Home", description: siteConfig.description }}>
-	<section class="hero">
-		<p>{siteConfig.description}</p>
-		<div class="socials">
-			{profile?.github && (
-				<>
-					<a href={profile.github} rel="noreferrer" target="_blank">GitHub</a>
-					<span class="sep">·</span>
-				</>
-			)}
-			{profile?.linkedin && (
-				<>
-					<a href={profile.linkedin} rel="noreferrer" target="_blank">LinkedIn</a>
-					<span class="sep">·</span>
-				</>
-			)}
-			{profile?.email && (
-				<>
-					<a href={`mailto:${profile.email}`}>Email</a>
-					<span class="sep">·</span>
-				</>
-			)}
-			<a href={withBase("/rss.xml")}>RSS</a>
+<PageLayout meta={{ title: "Início", description: siteConfig.description }}>
+	<section class="hero mb-[76px] max-[720px]:mb-14 max-[420px]:mb-12">
+		<div class="hero-header mb-4 flex items-center gap-4 max-[420px]:gap-3">
+			{
+				profile?.avatar && (
+					<img
+						src={profile.avatar}
+						alt={siteConfig.author}
+						class="avatar border-hairline motion-safe:ease hover:border-accent h-14 w-14 flex-shrink-0 rounded-full border object-cover hover:-translate-y-px motion-safe:transition-all motion-safe:duration-[0.2s] max-[420px]:h-[46px] max-[420px]:w-[46px]"
+						style="box-shadow: 0 0 0 3px hsl(var(--theme-bg))"
+						width="56"
+						height="56"
+					/>
+				)
+			}
+			<div class="hero-title flex flex-col gap-1">
+				<h1
+					class="text-text m-0 font-serif leading-[0.95] font-bold tracking-[-0.05em] [text-wrap:balance]"
+					style="font-size: clamp(2.2rem, 6vw, 4.2rem)"
+				>
+					{siteConfig.author}
+				</h1>
+				<span
+					class="text-accent font-mono text-[10.5px] tracking-[0.12em] lowercase max-[420px]:text-[10px]"
+					>everything is going to be okay...</span
+				>
+			</div>
+		</div>
+		<p
+			class="text-text mt-0 mb-[22px] max-w-[60ch] text-[18px] leading-[1.65] [text-wrap:pretty] [white-space:pre-line] max-[720px]:text-[18px] max-[420px]:text-[17px]"
+		>
+			{siteConfig.description}
+		</p>
+		<div
+			class="socials text-text/72 mt-4 flex flex-wrap items-center gap-[10px] font-sans text-[13px] max-[420px]:text-[12.5px]"
+		>
+			{
+				socials.map((s, i) => (
+					<>
+						<a
+							href={s.url}
+							rel="noreferrer"
+							target="_blank"
+							aria-label={s.name}
+							class="text-text-muted motion-safe:ease hover:text-accent motion-safe:transition-colors motion-safe:duration-[0.2s]"
+						>
+							<Icon name={s.icon} size={18} />
+						</a>
+					</>
+				))
+			}
 		</div>
 	</section>
 
-	<section class="writing" aria-labelledby="writing-label">
-		<div class="section-label" id="writing-label">Writing</div>
+	<section class="writing mb-[84px] max-[420px]:mb-16" aria-labelledby="writing-label">
+		<div class="section-label" id="writing-label">escritos</div>
 		<div class="timeline">
 			{
 				featured && (
@@ -83,21 +114,30 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 						href={withBase(`/posts/${featured.id}/`)}
 						style="--i: 0"
 					>
-						<div class="post-rail">
-							<time class="post-date" datetime={getPostSortDate(featured).toISOString()}>
-								{formatRailDate(getPostSortDate(featured))}
+						<div class="post-rail max-md:hidden">
+							<time class="post-date" datetime={featuredIso}>
+								{featuredLabel}
 							</time>
 							<span class="post-dot" aria-hidden="true" />
 						</div>
-						<div class="post-body">
-							<div class="post-stamp">Latest · {formatStampDate(getPostSortDate(featured))}</div>
-							<h2 class="post-title">{featured.data.title}</h2>
-							<p class="post-excerpt">{featured.data.description}</p>
+						<div class="post-body max-md:border-hairline pb-14 max-md:mb-1 max-md:border-b max-md:pb-6">
+							<div class="post-stamp text-accent mb-3 font-mono text-[10.5px] tracking-[0.12em] lowercase">
+								mais recente · {featuredLabel}
+							</div>
+							<h2
+								class="post-title text-text m-0 mb-[14px] leading-[1.14] font-medium tracking-[-0.03em] [text-wrap:balance] [word-wrap:break-word] max-[420px]:text-[17px] max-md:mb-[10px] max-md:text-[22px] max-md:leading-[1.2] max-md:tracking-[-0.015em]"
+								style="font-size: clamp(1.8rem, 4vw, 2.4rem)"
+							>
+								{featured.data.title}
+							</h2>
+							<p class="post-excerpt text-text-muted m-0 mb-4 max-w-[58ch] text-[18px] leading-[1.62] [overflow-wrap:break-word] [word-wrap:break-word] max-[420px]:text-[15px] max-md:mb-[10px] max-md:text-[15.5px] max-md:leading-[1.55]">
+								{featured.data.description}
+							</p>
 							{!!featured.data.tags?.length && (
-								<div class="post-meta">
+								<div class="post-meta text-text/72 font-mono [font-feature-settings:'tnum'] text-[11.5px] [font-variant-numeric:tabular-nums] max-md:text-[11px]">
 									{featured.data.tags.map((t, i) => (
 										<Fragment>
-											{i > 0 && <span class="dot">·</span>}
+											{i > 0 && <span class="dot text-faint mx-2">·</span>}
 											<span>{t}</span>
 										</Fragment>
 									))}
@@ -118,7 +158,7 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 					>
 						<div class="post-rail">
 							<time class="post-date" datetime={getPostSortDate(p).toISOString()}>
-								{formatRailDate(getPostSortDate(p))}
+								{getPostSortDate(p).toLocaleDateString("pt-PT")}
 							</time>
 							<span class="post-dot" aria-hidden="true" />
 						</div>
@@ -130,149 +170,20 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 				))
 			}
 
-			<div class="archive-link" style={`--i: ${rest.length + 1}`}>
-				<a data-astro-prefetch href={withBase("/posts/")}
-					>View all {archiveCount} posts →</a
+			<div class="archive-link text-text/72 col-start-2 mt-2 font-sans text-[13.5px] max-md:mt-0">
+				<a
+					data-astro-prefetch
+					href={withBase("/posts/")}
+					class="text-text-muted decoration-text/35 motion-safe:ease hover:text-accent hover:decoration-accent inline-block px-0 py-[6px] underline decoration-1 underline-offset-[3px] hover:translate-x-0.5 motion-safe:transition-all motion-safe:duration-[0.2s]"
 				>
+					ver todas as {archiveCount} publicações →
+				</a>
 			</div>
 		</div>
 	</section>
-
-	{showcase.length > 0 && (
-		<section class="work" aria-labelledby="work-label">
-			<div class="section-label" id="work-label">Showcase</div>
-			<ul class="work-list">
-				{showcase.map((item, idx) => (
-					<li style={`--i: ${idx + 1}`}>
-						<a href={item.href} rel="noreferrer" target="_blank">
-							<div class="head">
-								<span class="name">{item.name}</span>
-								<span class="stack">{item.stack}</span>
-								{item.badge && <span class="badge">{item.badge}</span>}
-							</div>
-							<p>{item.desc}</p>
-						</a>
-					</li>
-				))}
-			</ul>
-		</section>
-	)}
 </PageLayout>
 
 <style>
-	/* ---------- Hero ---------- */
-	.hero {
-		margin-bottom: 76px;
-	}
-	.hero p {
-		font-size: 19.5px;
-		line-height: 1.65;
-		color: hsl(var(--theme-text));
-		margin: 0 0 22px;
-		max-width: 60ch;
-		text-wrap: pretty;
-		white-space: pre-line;
-	}
-	.socials {
-		font-family: var(--font-sans);
-		font-size: 13.5px;
-		color: hsl(var(--theme-text) / 0.72);
-		margin-top: 18px;
-	}
-	.socials a {
-		color: hsl(var(--theme-text-muted));
-		text-decoration: underline;
-		text-decoration-color: hsl(var(--theme-text) / 0.35);
-		text-decoration-thickness: 1px;
-		text-underline-offset: 3px;
-		transition: color 0.2s ease, text-decoration-color 0.2s ease;
-	}
-	.socials a:hover {
-		color: hsl(var(--theme-accent));
-		text-decoration-color: hsl(var(--theme-accent));
-	}
-	.socials .sep {
-		color: var(--faint);
-		margin: 0 9px;
-	}
-
-	/* ---------- Writing timeline ---------- */
-	.writing {
-		margin-bottom: 84px;
-	}
-	/* ---------- Featured post ---------- */
-	.post.featured .post-body {
-		padding-bottom: 56px;
-	}
-	.post.featured .post-stamp {
-		font-family: var(--font-mono);
-		font-size: 11px;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: hsl(var(--theme-accent));
-		margin-bottom: 12px;
-	}
-	.post.featured .post-title {
-		font-size: 30px;
-		line-height: 1.14;
-		margin-bottom: 14px;
-		letter-spacing: -0.02em;
-	}
-	.post.featured .post-excerpt {
-		font-size: 18px;
-		line-height: 1.62;
-		color: hsl(var(--theme-text-muted));
-		margin: 0 0 16px;
-		max-width: 58ch;
-		word-wrap: break-word;
-		overflow-wrap: anywhere;
-	}
-	.post.featured .post-meta {
-		font-family: var(--font-mono);
-		font-size: 11.5px;
-		color: hsl(var(--theme-text) / 0.72);
-		font-variant-numeric: tabular-nums;
-		font-feature-settings: "tnum";
-	}
-	.post.featured .post-meta .dot {
-		color: var(--faint);
-		margin: 0 8px;
-	}
-	.post.featured .post-dot {
-		--rail-dot-size: 11px;
-		border-color: hsl(var(--theme-text-muted));
-	}
-	.post.featured:hover .post-dot {
-		background: hsl(var(--theme-accent));
-		border-color: hsl(var(--theme-accent));
-	}
-
-	.archive-link {
-		grid-column: 2;
-		margin-top: 8px;
-		font-family: var(--font-sans);
-		font-size: 13.5px;
-		color: hsl(var(--theme-text) / 0.72);
-	}
-	.archive-link a {
-		display: inline-block;
-		padding: 6px 0;
-		color: hsl(var(--theme-text-muted));
-		text-decoration: underline;
-		text-decoration-color: hsl(var(--theme-text) / 0.35);
-		text-decoration-thickness: 1px;
-		text-underline-offset: 3px;
-		transition: color 0.2s ease, text-decoration-color 0.2s ease;
-	}
-	.archive-link a:hover {
-		color: hsl(var(--theme-accent));
-		text-decoration-color: hsl(var(--theme-accent));
-	}
-
-	.work {
-		margin-bottom: 88px;
-	}
-
 	.socials a:focus-visible,
 	.archive-link a:focus-visible {
 		outline: 2px solid hsl(var(--theme-accent));
@@ -280,64 +191,12 @@ const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
 		border-radius: 3px;
 	}
 
-	@media (max-width: 720px) {
-		.hero {
-			margin-bottom: 56px;
-		}
-		.hero p {
-			font-size: 18px;
-		}
-		.post.featured .post-rail {
-			display: none;
-		}
-		.post.featured .post-body {
-			padding-bottom: 24px;
-			border-bottom: 1px solid var(--hairline);
-			margin-bottom: 4px;
-		}
-		.post.featured .post-title {
-			font-size: 22px;
-			line-height: 1.2;
-			letter-spacing: -0.015em;
-			margin-bottom: 10px;
-		}
-		.post.featured .post-excerpt {
-			font-size: 15.5px;
-			line-height: 1.55;
-			margin: 0 0 10px;
-		}
-		.post.featured .post-meta {
-			font-size: 11px;
-		}
-		.archive-link {
-			margin-top: 0;
-		}
+	.post.featured .post-dot {
+		--rail-dot-size: 11px;
+		border-color: hsl(var(--theme-text-muted));
 	}
-
-	@media (max-width: 420px) {
-		.hero {
-			margin-bottom: 48px;
-		}
-		.hero p {
-			font-size: 17px;
-		}
-		.socials {
-			font-size: 12.5px;
-		}
-		.socials .sep {
-			margin: 0 6px;
-		}
-		.writing {
-			margin-bottom: 64px;
-		}
-		.post.featured .post-title {
-			font-size: 17px;
-		}
-		.post.featured .post-excerpt {
-			font-size: 15px;
-		}
-		.work {
-			margin-bottom: 56px;
-		}
+	.post.featured:hover .post-dot {
+		background: hsl(var(--theme-accent));
+		border-color: hsl(var(--theme-accent));
 	}
 </style>

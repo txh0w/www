@@ -1,14 +1,21 @@
 ---
-title: About
-description: A short introduction. Replace this in src/content/page/about.md.
+title: Sobre
+description: Uma breve apresentação sobre mim e o que escrevo.
 ---
 
-This is the About page. It's a markdown file at `src/content/page/about.md` — edit it freely. The shape is intentionally unstructured so you can write a paragraph, a list, a CV, or whatever fits.
+# oii! sou o Thom
 
-A few example bullets to get going:
+eu gosto de escrever sobre coisas, e criei esse website exatamente por isso!
 
-- 👋 One-line intro — what you do, where, since when.
-- 🛠 The tools you reach for first.
-- 📝 What you tend to write about here.
+tenho interesse em:
 
-Find me on [GitHub](https://github.com/example), [LinkedIn](https://www.linkedin.com/in/example/), or by [email](mailto:john@example.com).
+- anime;
+- jogos;
+- literatura;
+- historia
+
+e varias outras coisas...
+
+pretendo escrever aqui sobre coisas que me veem na mente, e é isso, não espere algo muito bom também...
+
+seja bem-vindo! (≧◡≦)

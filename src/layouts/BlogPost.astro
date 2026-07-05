@@ -3,11 +3,11 @@ import { type CollectionEntry, render } from "astro:content";
 import { Image } from "astro:assets";
 
 import ShareButtons from "@/components/blog/ShareButtons.astro";
-import WebMentions from "@/components/blog/webmentions/index.astro";
-import { getAllPosts, getPostSortDate, sortMDByDate } from "@/data/post";
+import { getAllPosts, sortMDByDate } from "@/data/post";
 import { siteConfig } from "@/site-config";
 import { formatBylineDate, formatEyebrowDate } from "@/utils/date";
 import { absoluteUrl, withBase } from "@/utils/path";
+import "katex/dist/katex.min.css";
 
 import BaseLayout from "./Base.astro";
 import { Schema } from "astro-seo-schema";
@@ -23,35 +23,24 @@ const idx = sortedAll.findIndex((p) => p.id === post.id);
 const newerPost = idx > 0 ? sortedAll[idx - 1] : undefined;
 const olderPost = idx >= 0 && idx < sortedAll.length - 1 ? sortedAll[idx + 1] : undefined;
 const {
-	data: { coverImage, description, ogImage, publishDate, title, updatedDate, tags, draft },
+	data: { coverImage, description, publishDate, title, updatedDate, tags, draft, ogImage },
 	id: slug,
 } = post;
-const socialImage = ogImage ?? `/og-image/${slug}.png`;
+
+const ogImageUrl = ogImage
+	? absoluteUrl(withBase(ogImage), Astro.site)
+	: absoluteUrl(withBase(`/og-image/${slug}.png`), Astro.site);
 const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString();
 const { remarkPluginFrontmatter } = await render(post);
 
 const authorName = siteConfig.profile?.name ?? siteConfig.author;
-const comments = siteConfig.comments;
 const postUrl = absoluteUrl(`/posts/${slug}/`, Astro.site);
-const socialImageAbsolute = absoluteUrl(socialImage, Astro.site);
 
-// "Posts · Month YYYY"
 const eyebrowDate = formatEyebrowDate(publishDate);
-
-// "2 May 2026"
 const bylineDate = formatBylineDate(publishDate);
 
-// Prefer remark plugin's value; fall back to "".
 const readingTime: string =
 	(remarkPluginFrontmatter as { minutesRead?: string })?.minutesRead ?? "";
-
-// Custom giscus themes only in prod: the giscus.app iframe can't fetch CSS from localhost / private IPs.
-const giscusThemes = import.meta.env.PROD
-	? {
-			light: new URL("/giscus-light.css", Astro.site).toString(),
-			dark: new URL("/giscus-dark.css", Astro.site).toString(),
-		}
-	: { light: "noborder_light", dark: "noborder_dark" };
 ---
 
 <Schema
@@ -62,7 +51,6 @@ const giscusThemes = import.meta.env.PROD
 		datePublished: articleDate,
 		dateModified: updatedDate?.toISOString(),
 		url: postUrl,
-		image: socialImageAbsolute,
 		author: {
 			"@type": "Person",
 			name: authorName,
@@ -71,91 +59,163 @@ const giscusThemes = import.meta.env.PROD
 	}}
 />
 
-<BaseLayout meta={{ articleDate, description, ogImage: socialImage, title }}>
-	<div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
-	<div class="post-shell">
-		<div class="post-main" data-pagefind-body>
+<BaseLayout meta={{ articleDate, description, ogImage: ogImageUrl, title }}>
+	<div
+		class="reading-progress bg-accent pointer-events-none fixed top-0 left-0 z-[100] h-[2px] w-0 motion-safe:transition-[width] motion-safe:duration-[0.05s] motion-safe:ease-linear"
+		id="reading-progress"
+		aria-hidden="true"
+	>
+	</div>
+	<div class="relative block">
+		<div class="post-main mx-auto w-full max-w-[720px]" data-pagefind-body>
 			<div id="blog-hero" class="post-header">
-				<div class="post-eyebrow">
-					Posts <span class="sep">·</span> {eyebrowDate}
+				<div
+					class="post-eyebrow text-text/45 font-mono [font-feature-settings:'tnum'] text-[11px] font-medium tracking-[0.18em] uppercase [font-variant-numeric:tabular-nums] max-[420px]:mb-[18px]"
+				>
+					{eyebrowDate}
 				</div>
-				{draft && <span class="draft-flag">(Draft)</span>}
-				<h1 class="post-title">{title}</h1>
-				<p class="byline">
-					{authorName && <>By {authorName}<span class="sep">·</span></>}{bylineDate}{readingTime && (
-						<>
-							<span class="sep">·</span>{readingTime}
-						</>
-					)}
-				</p>
-				{!!tags?.length && (
-					<div class="post-tags">
-						{tags.map((tag, i) => (
-							<>
-								<span data-pagefind-filter="tag">{tag}</span>{i < tags.length - 1 && <span class="sep">·</span>}
-							</>
-						))}
-					</div>
-				)}
-				{updatedDate && (
-					<div class="post-updated">
-						Updated <time datetime={updatedDate.toISOString()}>
-							{formatBylineDate(updatedDate)}
-						</time>
-					</div>
-				)}
+				{
+					draft && (
+						<span class="draft-flag mb-3 inline-block font-mono text-[11.5px] tracking-[0.08em] text-[#c14a2b]">
+							(rascunho)
+						</span>
+					)
+				}
+				<h1
+					class="post-title text-text m-0 mb-3 font-serif leading-[1.1] font-normal tracking-[-0.022em] [text-wrap:balance] [overflow-wrap:break-word] break-words max-[720px]:text-[30px] max-[720px]:leading-[1.15] max-[420px]:text-[26px]"
+					style="font-size: clamp(28px, 5.5vw, 46px)"
+				>
+					{title}
+				</h1>
+				<div class="post-meta mb-9">
+					<p
+						class="byline text-text-muted m-0 mb-7 font-serif [font-feature-settings:'tnum'] text-[15px] leading-[1.5] font-normal italic [font-variant-numeric:tabular-nums] max-[720px]:text-[15.5px] max-[420px]:mb-6 max-[420px]:text-[14.5px]"
+					>
+						{
+							authorName && (
+								<>
+									por {authorName.toLowerCase()}
+									<span class="sep text-faint mx-[6px] not-italic">·</span>
+								</>
+							)
+						}{bylineDate}{
+							readingTime && (
+								<>
+									<span class="sep text-faint mx-[6px] not-italic">·</span>
+									{readingTime}
+								</>
+							)
+						}
+					</p>
+
+					{
+						siteConfig.profile?.avatar && (
+							<div class="author-card border-hairline flex max-w-fit items-center gap-3 border-t pt-[14px]">
+								<img
+									src={siteConfig.profile.avatar}
+									alt={authorName}
+									class="author-avatar border-hairline bg-paper h-10 w-10 rounded-full border object-cover"
+									width="40"
+									height="40"
+								/>
+								<div class="author-info flex flex-col gap-[2px]">
+									<span class="author-name text-text font-serif text-[15px] italic">
+										{authorName.toLowerCase()}
+									</span>
+									<span class="author-role text-text/55 font-mono text-[11px] tracking-[0.08em] lowercase">
+										everything is going to be okay...
+									</span>
+								</div>
+							</div>
+						)
+					}
+				</div>
+				{
+					!!tags?.length && (
+						<div class="post-tags text-text/45 mb-10 font-mono text-[11.5px] tracking-[0.02em] break-words">
+							{tags.map((tag, i) => (
+								<>
+									<span data-pagefind-filter="tag">{tag}</span>
+									{i < tags.length - 1 && <span class="sep text-faint mx-[6px]">·</span>}
+								</>
+							))}
+						</div>
+					)
+				}
 			</div>
 
-			{coverImage ? (
-				<figure class="post-cover">
-					<Image
-						src={coverImage.src}
-						alt={coverImage.alt}
-						loading="eager"
-						fetchpriority="high"
-						decoding="async"
-						widths={[480, 720, 960, 1280]}
-						sizes="(max-width: 720px) 92vw, 696px"
-					/>
-				</figure>
-			) : (
-				<hr class="rule" />
-			)}
+			{
+				coverImage ? (
+					<figure class="post-cover mb-9 p-0">
+						<Image
+							src={coverImage.src}
+							alt={coverImage.alt}
+							loading="eager"
+							fetchpriority="high"
+							decoding="async"
+							widths={[480, 720, 960, 1280]}
+							sizes="(max-width: 720px) 92vw, 696px"
+							class="border-hairline bg-paper block h-auto max-h-[380px] w-full rounded border object-cover"
+						/>
+					</figure>
+				) : (
+					<hr class="rule bg-hairline ease motion-safe:ease mb-0 h-[1px] border-0 transition-[background-color] duration-[0.35s] motion-safe:transition-[background-color] motion-safe:duration-[0.35s]" />
+				)
+			}
 
-			<article class="post-article">
+			<article class="post-article prose prose-slate dark:prose-invert max-w-none font-serif">
 				<slot />
 			</article>
 
-			<ShareButtons title={title} url={postUrl} description={description} />
+			<ShareButtons {...{ title, url: postUrl, description } as any} />
 
-			<WebMentions />
+			<hr
+				class="rule rule--footer bg-hairline ease motion-safe:ease mt-14 mb-7 h-[1px] border-0 transition-[background-color] duration-[0.35s] motion-safe:transition-[background-color] motion-safe:duration-[0.35s]"
+			/>
 
-			<hr class="rule rule--footer" />
-
-			{(olderPost || newerPost) && (
-				<nav class="post-pager" aria-label="More posts">
-					{olderPost && (
-						<a class="pager-link prev" data-astro-prefetch href={withBase(`/posts/${olderPost.id}/`)}>
-							<span class="pager-eyebrow">Older</span>
-							<span class="pager-title">{olderPost.data.title}</span>
-						</a>
-					)}
-					{newerPost && (
-						<a class="pager-link next" data-astro-prefetch href={withBase(`/posts/${newerPost.id}/`)}>
-							<span class="pager-eyebrow">Newer</span>
-							<span class="pager-title">{newerPost.data.title}</span>
-						</a>
-					)}
-				</nav>
-			)}
-
-			{comments && <div class="comments" id="comments"></div>}
+			{
+				(olderPost || newerPost) && (
+					<nav
+						class="post-pager mb-14 grid grid-cols-2 gap-x-12 gap-y-7 max-[720px]:mb-10 max-[720px]:grid-cols-1 max-[720px]:gap-y-[22px]"
+						aria-label="More posts"
+					>
+						{olderPost && (
+							<a
+								class="pager-link prev motion-safe:ease block min-w-0 no-underline hover:-translate-x-0.5 motion-safe:transition-transform motion-safe:duration-[0.25s]"
+								data-astro-prefetch
+								href={withBase(`/posts/${olderPost.id}/`)}
+							>
+								<span class="pager-eyebrow text-text/50 mb-2 block font-mono text-[11px] font-medium tracking-[0.14em] uppercase before:content-['←_']">
+									mais antigos
+								</span>
+								<span class="pager-title text-text motion-safe:ease group-hover/pager-link:text-accent block font-serif text-[17.5px] leading-[1.3] font-medium tracking-[-0.01em] [text-wrap:balance] [overflow-wrap:anywhere] break-words motion-safe:transition-colors motion-safe:duration-[0.2s]">
+									{olderPost.data.title}
+								</span>
+							</a>
+						)}
+						{newerPost && (
+							<a
+								class="pager-link next motion-safe:ease block min-w-0 text-right no-underline hover:translate-x-0.5 motion-safe:transition-transform motion-safe:duration-[0.25s] max-[720px]:text-left"
+								data-astro-prefetch
+								href={withBase(`/posts/${newerPost.id}/`)}
+							>
+								<span class="pager-eyebrow text-text/50 mb-2 block font-mono text-[11px] font-medium tracking-[0.14em] uppercase after:content-['_→']">
+									mais recentes
+								</span>
+								<span class="pager-title text-text motion-safe:ease block font-serif text-[17.5px] leading-[1.3] font-medium tracking-[-0.01em] [text-wrap:balance] [overflow-wrap:anywhere] break-words motion-safe:transition-colors motion-safe:duration-[0.2s]">
+									{newerPost.data.title}
+								</span>
+							</a>
+						)}
+					</nav>
+				)
+			}
 		</div>
 	</div>
 
 	<button
-		aria-label="Back to Top"
-		class="to-top-btn"
+		aria-label="Ir para o topo"
+		class="to-top-btn bg-accent-soft text-text-muted motion-safe:ease hover:border-hairline hover:text-accent invisible fixed right-4 bottom-8 z-90 flex h-10 w-10 translate-y-7 items-center justify-center rounded-full border border-transparent opacity-0 data-[show=true]:visible data-[show=true]:translate-y-0 data-[show=true]:opacity-100 motion-safe:transition-all motion-safe:duration-[0.3s] max-md:right-8 max-md:h-11 max-md:w-11"
 		data-show="false"
 		id="to-top-btn"
 	>
@@ -167,503 +227,26 @@ const giscusThemes = import.meta.env.PROD
 			stroke-width="2"
 			viewBox="0 0 24 24"
 			xmlns="http://www.w3.org/2000/svg"
+			class="h-5 w-5"
 		>
 			<path d="M4.5 15.75l7.5-7.5 7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
 		</svg>
 	</button>
 </BaseLayout>
 
-<style>
-	.post-shell { display: block; position: relative; }
-
-	.reading-progress {
-		position: fixed;
-		top: 0;
-		left: 0;
-		height: 2px;
-		width: 0;
-		background: hsl(var(--theme-accent));
-		z-index: 100;
-		pointer-events: none;
-		transition: width 0.05s linear;
-	}
-
-	.post-cover {
-		margin: 0 0 36px;
-		padding: 0;
-	}
-	.post-cover img {
-		display: block;
-		width: 100%;
-		height: auto;
-		max-height: 380px;
-		object-fit: cover;
-		border: 1px solid var(--hairline);
-		border-radius: 4px;
-		background: var(--paper);
-	}
-
-	.post-eyebrow {
-		font-family: var(--font-mono);
-		font-size: 11.5px;
-		font-weight: 500;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: hsl(var(--theme-text) / 0.55);
-		margin-bottom: 22px;
-		font-variant-numeric: tabular-nums;
-		font-feature-settings: "tnum";
-	}
-	.post-eyebrow .sep {
-		color: var(--faint);
-		margin: 0 8px;
-	}
-
-	.draft-flag {
-		display: inline-block;
-		font-family: var(--font-mono);
-		font-size: 11.5px;
-		color: #c14a2b;
-		margin-bottom: 12px;
-		letter-spacing: 0.08em;
-	}
-
-	.post-title {
-		font-family: var(--font-serif);
-		font-weight: 500;
-		font-size: clamp(28px, 5.5vw, 46px);
-		letter-spacing: -0.022em;
-		line-height: 1.1;
-		color: hsl(var(--theme-text));
-		margin: 0 0 18px;
-		word-wrap: break-word;
-		overflow-wrap: break-word;
-	}
-	.post-title :global(em) {
-		font-style: italic;
-		color: hsl(var(--theme-accent));
-		font-weight: 400;
-	}
-
-	.byline {
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-size: 16.5px;
-		color: hsl(var(--theme-text-muted));
-		margin: 0 0 14px;
-		line-height: 1.5;
-		font-variant-numeric: tabular-nums;
-		font-feature-settings: "tnum";
-	}
-	.byline .sep {
-		color: var(--faint);
-		margin: 0 6px;
-		font-style: normal;
-	}
-
-	.post-tags {
-		font-family: var(--font-mono);
-		font-size: 11.5px;
-		color: hsl(var(--theme-text) / 0.55);
-		letter-spacing: 0.02em;
-		margin-bottom: 32px;
-		word-break: break-word;
-	}
-	.post-tags .sep {
-		color: var(--faint);
-		margin: 0 6px;
-	}
-
-	.post-updated {
-		font-family: var(--font-mono);
-		font-size: 11px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: hsl(var(--theme-text) / 0.5);
-		margin: -16px 0 32px;
-	}
-
-	.rule {
-		height: 1px;
-		background: var(--hairline);
-		border: 0;
-		margin: 0 0 44px;
-		transition: background-color 0.35s ease;
-	}
-	/* Extra spacing so stacked footer blocks (post-end link, comments) read as intentional. */
-	.rule--footer {
-		margin: 56px 0 28px;
-	}
-
-	/* Match article body width */
-	.comments { max-width: var(--reading-width); margin: 56px 0 32px; }
-	.comments .giscus { max-width: 100%; }
-
-	/* Prev/Next post navigation */
-	.post-pager {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		column-gap: 32px;
-		row-gap: 28px;
-		margin: 0 0 56px;
-		padding: 0 0 0 0;
-	}
-	.pager-link {
-		display: block;
-		text-decoration: none;
-		min-width: 0;
-		transition: transform 0.25s ease;
-	}
-	.pager-link.next {
-		text-align: right;
-	}
-	.pager-link.prev:hover { transform: translateX(-2px); }
-	.pager-link.next:hover { transform: translateX(2px); }
-	.pager-eyebrow {
-		display: block;
-		font-family: var(--font-mono);
-		font-size: 11px;
-		font-weight: 500;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: hsl(var(--theme-text) / 0.72);
-		margin-bottom: 8px;
-	}
-	.pager-link.prev .pager-eyebrow::before { content: "← "; }
-	.pager-link.next .pager-eyebrow::after { content: " →"; }
-	.pager-title {
-		display: block;
-		font-family: var(--font-serif);
-		font-size: 17.5px;
-		line-height: 1.3;
-		font-weight: 500;
-		letter-spacing: -0.01em;
-		color: hsl(var(--theme-text));
-		text-wrap: balance;
-		word-wrap: break-word;
-		overflow-wrap: anywhere;
-		transition: color 0.2s ease;
-	}
-	.pager-link:hover .pager-title {
-		color: hsl(var(--theme-accent));
-	}
-	/* Lone prev/next spans full width, text on its natural side. */
-	.post-pager:has(.pager-link.prev:only-child) .pager-link.prev,
-	.post-pager:has(.pager-link.next:only-child) .pager-link.next {
-		grid-column: 1 / -1;
-	}
-	@media (max-width: 720px) {
-		.post-pager {
-			grid-template-columns: 1fr;
-			row-gap: 22px;
-			margin-bottom: 40px;
-		}
-		.pager-link.next {
-			order: 0;
-			text-align: left;
-		}
-		.pager-link.prev {
-			order: 1;
-		}
-	}
-
-	.to-top-btn {
-		position: fixed;
-		bottom: 32px;
-		right: 16px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 40px;
-		height: 40px;
-		border-radius: 999px;
-		border: 1px solid transparent;
-		background: var(--accent-soft);
-		color: hsl(var(--theme-text-muted));
-		cursor: pointer;
-		opacity: 0;
-		transform: translateY(28px);
-		transition: opacity 0.3s ease, transform 0.3s ease, color 0.2s ease, border-color 0.2s ease;
-		z-index: 90;
-	}
-	.to-top-btn[data-show="true"] {
-		opacity: 1;
-		transform: translateY(0);
-	}
-	.to-top-btn:hover {
-		color: hsl(var(--theme-accent));
-		border-color: var(--hairline);
-	}
-	.to-top-btn svg {
-		width: 20px;
-		height: 20px;
-	}
-	@media (min-width: 720px) {
-		.to-top-btn {
-			right: 32px;
-			bottom: 32px;
-			width: 44px;
-			height: 44px;
-		}
-	}
-
-	@media (max-width: 720px) {
-		.post-title { font-size: 30px; line-height: 1.15; }
-		.byline { font-size: 15.5px; }
-		.rule { margin-bottom: 32px; }
-	}
-	@media (max-width: 420px) {
-		.post-eyebrow { font-size: 11px; margin-bottom: 18px; }
-		.post-eyebrow .sep { margin: 0 6px; }
-		.post-title { font-size: 26px; }
-		.byline { font-size: 14.5px; margin-bottom: 24px; }
-		.rule { margin-bottom: 26px; }
-		.post-end { font-size: 14px; }
-	}
-
-	.post-end a:focus-visible,
-	.to-top-btn:focus-visible {
-		outline: 2px solid hsl(var(--theme-accent));
-		outline-offset: 3px;
-		border-radius: 3px;
-	}
-</style>
-
 <style is:global>
+	.author-avatar {
+		box-shadow: 0 0 0 1px hsl(var(--theme-bg));
+	}
+
+	.author-name {
+		letter-spacing: -0.01em;
+	}
+
 	.post-article {
-		font-family: var(--font-serif);
-		color: hsl(var(--theme-text));
-	}
-
-	.post-article > p {
-		font-size: 17.5px;
-		line-height: 1.75;
-		color: hsl(var(--theme-text));
-		margin: 0 0 24px;
-		max-width: var(--reading-width);
-		word-wrap: break-word;
-		overflow-wrap: anywhere;
-	}
-	.post-article > p:first-of-type::first-letter {
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-weight: 500;
-		color: hsl(var(--theme-accent));
-		float: left;
-		font-size: 3.6em;
-		line-height: 0.92;
-		padding: 4px 10px 0 0;
-		margin-top: 4px;
-	}
-	.post-article p em,
-	.post-article em {
-		font-style: italic;
-	}
-	.post-article p strong,
-	.post-article strong {
-		font-weight: 500;
-		color: hsl(var(--theme-text));
-	}
-
-	.post-article h2 {
-		font-family: var(--font-serif);
-		font-weight: 500;
-		font-size: 27px;
-		line-height: 1.22;
-		letter-spacing: -0.014em;
-		color: hsl(var(--theme-text));
-		margin: 56px 0 20px;
-		word-wrap: break-word;
-		overflow-wrap: anywhere;
-	}
-	.post-article h3 {
-		font-family: var(--font-serif);
-		font-weight: 500;
-		font-style: italic;
-		font-size: 20px;
-		line-height: 1.3;
-		letter-spacing: -0.005em;
-		color: hsl(var(--theme-text));
-		margin: 38px 0 14px;
-		word-wrap: break-word;
-		overflow-wrap: anywhere;
-	}
-	.post-article h4 {
-		font-family: var(--font-serif);
-		font-weight: 500;
-		font-size: 17.5px;
-		line-height: 1.35;
-		color: hsl(var(--theme-text));
-		margin: 30px 0 12px;
-	}
-
-	.post-article a {
-		color: hsl(var(--theme-text));
-		text-decoration: underline;
-		text-decoration-color: hsl(var(--theme-text) / 0.35);
-		text-decoration-thickness: 1px;
-		text-underline-offset: 3px;
-		word-break: break-word;
-		overflow-wrap: anywhere;
-		transition: color 0.2s ease, text-decoration-color 0.2s ease;
-	}
-	.post-article a:hover {
-		color: hsl(var(--theme-accent));
-		text-decoration-color: hsl(var(--theme-accent));
-	}
-
-	.post-article :not(pre) > code {
-		font-family: var(--font-mono);
-		font-size: 14.5px;
-		background: var(--paper);
-		border: 1px solid var(--hairline);
-		padding: 1px 6px;
-		border-radius: 3px;
-		color: hsl(var(--theme-text-muted));
-		font-variant-numeric: tabular-nums;
-		font-feature-settings: "tnum";
-		transition: background-color 0.35s ease, border-color 0.35s ease;
-	}
-
-	.post-article pre {
-		background: var(--paper);
-		border: 1px solid var(--hairline);
-		border-radius: 4px;
-		padding: 16px;
-		margin: 28px 0;
-		overflow-x: auto;
-		max-width: 100%;
-		font-size: 14px;
-		line-height: 1.7;
-		transition: background-color 0.35s ease, border-color 0.35s ease;
-	}
-	.post-article pre code {
-		background: transparent;
-		border: 0;
-		padding: 0;
-		font-size: inherit;
-		color: inherit;
-	}
-	/* expressive-code wrapper safety */
-	.post-article .expressive-code {
-		margin: 28px 0;
-	}
-
-	.post-article ul {
-		margin: 0 0 28px;
-		padding: 0;
-		list-style: none;
-		max-width: var(--reading-width);
-	}
-	.post-article ul li {
-		position: relative;
-		padding-left: 22px;
-		font-size: 17.5px;
-		line-height: 1.7;
-		color: hsl(var(--theme-text));
-		margin-bottom: 10px;
-		word-wrap: break-word;
-		overflow-wrap: anywhere;
-	}
-	.post-article ul li::before {
-		content: "";
-		position: absolute;
-		left: 4px;
-		top: 0.78em;
-		width: 5px;
-		height: 5px;
-		border-radius: 50%;
-		background: hsl(var(--theme-accent));
-	}
-	.post-article ul ul {
-		margin: 10px 0 4px;
-	}
-	.post-article ul ul li {
-		font-size: 17px;
-		color: hsl(var(--theme-text-muted));
-		margin-bottom: 6px;
-	}
-	.post-article ul ul li::before {
-		background: transparent;
-		border: 1px solid hsl(var(--theme-accent));
-		width: 5px;
-		height: 5px;
-	}
-
-	.post-article ol {
-		margin: 0 0 28px;
-		padding-left: 22px;
-		max-width: var(--reading-width);
-	}
-	.post-article ol li {
-		font-size: 17.5px;
-		line-height: 1.7;
-		color: hsl(var(--theme-text));
-		margin-bottom: 10px;
-		padding-left: 6px;
-	}
-	.post-article ol li::marker {
-		color: hsl(var(--theme-accent));
-		font-family: var(--font-mono);
-		font-size: 14px;
-	}
-
-	.post-article li > p {
-		margin: 0;
-		display: inline;
-	}
-
-	.post-article blockquote {
-		margin: 28px 0;
-		padding: 4px 0 4px 22px;
-		border-left: 2px solid hsl(var(--theme-accent));
-		font-style: italic;
-		color: hsl(var(--theme-text-muted));
-		font-size: 18px;
-		line-height: 1.65;
-		max-width: var(--reading-width);
-	}
-	.post-article blockquote p {
-		margin: 0 0 12px;
-		font-size: inherit;
-		max-width: none;
-	}
-	.post-article blockquote p:last-child {
-		margin-bottom: 0;
-	}
-	.post-article blockquote p:first-of-type::first-letter {
-		all: unset;
-	}
-
-	/* Predictable sizing prevents CLS */
-	.post-article figure {
-		margin: 36px 0;
-		padding: 0;
-	}
-	.post-article figure video,
-	.post-article video {
-		display: block;
-		width: 100%;
-		height: auto;
-		border: 1px solid var(--hairline);
-		background: var(--paper);
-		transition: border-color 0.35s ease;
-	}
-	.post-article img {
-		display: block;
-		max-width: 100%;
-		height: auto;
-		border: 1px solid var(--hairline);
-		background: var(--paper);
-	}
-	@media (prefers-reduced-motion: no-preference) {
-		.post-article img[loading="lazy"]:not([data-in]) {
-			opacity: 0;
-		}
-		.post-article img[loading="lazy"][data-in] {
-			opacity: 1;
-			transition: opacity 360ms ease;
-		}
+		--tw-prose-body: hsl(var(--theme-text));
+		--tw-prose-headings: hsl(var(--theme-text));
+		--tw-prose-links: hsl(var(--theme-accent));
 	}
 
 	.post-article h2,
@@ -709,122 +292,23 @@ const giscusThemes = import.meta.env.PROD
 			opacity: 0.35;
 		}
 	}
-	.post-article figure img {
-		width: 100%;
-	}
-	.post-article figcaption {
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-size: 14.5px;
-		color: hsl(var(--theme-text) / 0.72);
-		margin-top: 12px;
-		line-height: 1.5;
-	}
-	.post-article figcaption .label {
-		font-family: var(--font-mono);
-		font-style: normal;
-		font-size: 11px;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: hsl(var(--theme-text-muted));
-		margin-right: 8px;
-	}
 
-	.post-article table {
-		width: 100%;
-		max-width: 100%;
-		border-collapse: collapse;
-		margin: 28px 0;
-		font-size: 15.5px;
-		font-family: var(--font-sans);
-	}
-	.post-article th,
-	.post-article td {
-		text-align: left;
-		padding: 8px 12px;
-		border-bottom: 1px solid var(--hairline);
-	}
-	.post-article th {
-		font-weight: 500;
-		color: hsl(var(--theme-text));
-	}
-
-	.post-article hr {
-		border: 0;
-		height: 1px;
-		background: var(--hairline);
-		margin: 40px 0;
+	.post-main > .rule {
+		margin-bottom: 56px;
 	}
 
 	@media (max-width: 720px) {
-		.post-article > p,
-		.post-article ul li,
-		.post-article ol li {
-			font-size: 17px;
-			line-height: 1.72;
+		.post-main > .rule {
+			margin-bottom: 32px;
 		}
-		.post-article h2 { font-size: 23px; margin: 44px 0 16px; }
-		.post-article h3 { font-size: 18.5px; margin: 30px 0 12px; }
-		.post-article :not(pre) > code { font-size: 13.5px; }
-		.post-article figure { margin: 28px 0; }
 	}
 	@media (max-width: 420px) {
-		.post-article > p,
-		.post-article ul li,
-		.post-article ol li {
-			font-size: 16px;
-			line-height: 1.7;
+		.post-main > .rule {
+			margin-bottom: 26px;
 		}
-		.post-article h2 { font-size: 20px; margin: 36px 0 14px; }
-		.post-article h3 { font-size: 17px; margin: 26px 0 10px; }
-		.post-article ul { padding-left: 0; }
-		.post-article ul li { padding-left: 18px; }
-		.post-article blockquote { padding-left: 16px; font-size: 16.5px; }
-		.post-article figcaption { font-size: 13.5px; }
-	}
-
-	.post-article a:focus-visible {
-		outline: 2px solid hsl(var(--theme-accent));
-		outline-offset: 3px;
-		border-radius: 3px;
 	}
 </style>
 
-{comments && (
-	<script is:inline define:vars={{ comments, giscusThemes }}>
-		document.addEventListener("DOMContentLoaded", () => {
-			const mount = document.getElementById("comments");
-			if (!mount) return;
-			const theme = document.documentElement.getAttribute("data-theme");
-			const script = document.createElement("script");
-			script.src = "https://giscus.app/client.js";
-			script.setAttribute("data-repo", comments.repo);
-			script.setAttribute("data-repo-id", comments.repoId);
-			script.setAttribute("data-category", comments.category);
-			script.setAttribute("data-category-id", comments.categoryId);
-			script.setAttribute("data-mapping", "title");
-			script.setAttribute("data-strict", "0");
-			script.setAttribute("data-reactions-enabled", "1");
-			script.setAttribute("data-emit-metadata", "0");
-			script.setAttribute("data-input-position", "top");
-			script.setAttribute("data-theme", theme === "dark" ? giscusThemes.dark : giscusThemes.light);
-			script.setAttribute("data-lang", "en");
-			script.setAttribute("crossorigin", "anonymous");
-			script.async = true;
-			mount.appendChild(script);
-
-			document.addEventListener("theme-change", (e) => {
-				const iframe = document.querySelector("iframe.giscus-frame");
-				if (iframe && iframe.contentWindow) {
-					iframe.contentWindow.postMessage(
-						{ giscus: { setConfig: { theme: e.detail.theme === "dark" ? giscusThemes.dark : giscusThemes.light } } },
-						"https://giscus.app",
-					);
-				}
-			});
-		});
-	</script>
-)}
 <script>
 	const scrollBtn = document.getElementById("to-top-btn") as HTMLButtonElement | null;
 	const heroEl = document.getElementById("blog-hero") as HTMLDivElement | null;
@@ -852,9 +336,7 @@ const giscusThemes = import.meta.env.PROD
 		window.addEventListener("resize", update, { passive: true });
 	}
 
-	const lazyImgs = document.querySelectorAll<HTMLImageElement>(
-		'.post-article img[loading="lazy"]',
-	);
+	const lazyImgs = document.querySelectorAll<HTMLImageElement>('.post-article img[loading="lazy"]');
 	if (lazyImgs.length && "IntersectionObserver" in window) {
 		const io = new IntersectionObserver(
 			(entries) => {
@@ -871,7 +353,11 @@ const giscusThemes = import.meta.env.PROD
 	}
 
 	const slugify = (s: string) =>
-		s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+		s
+			.toLowerCase()
+			.trim()
+			.replace(/[^a-z0-9]+/g, "-")
+			.replace(/^-+|-+$/g, "");
 	const usedIds = new Set<string>();
 	document
 		.querySelectorAll<HTMLHeadingElement>(".post-article h2, .post-article h3")
@@ -886,7 +372,7 @@ const giscusThemes = import.meta.env.PROD
 			const btn = document.createElement("button");
 			btn.type = "button";
 			btn.className = "heading-anchor";
-			btn.setAttribute("aria-label", `Copy link to ${h.textContent ?? "section"}`);
+			btn.setAttribute("aria-label", `Copiar link para ${h.textContent ?? "section"}`);
 			btn.textContent = "#";
 			btn.addEventListener("click", async () => {
 				const url = `${location.origin}${location.pathname}#${id}`;

@@ -4,13 +4,9 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
-import robotsTxt from "astro-robots-txt";
-import webmanifest from "astro-webmanifest";
 import { unified } from "@astrojs/markdown-remark";
 import { defineConfig } from "astro/config";
-import { expressiveCodeOptions } from "./src/site.config";
-import { siteConfig } from "./src/site.config";
-import partytown from "@astrojs/partytown";
+import { expressiveCodeOptions, siteConfig } from "./src/site.config";
 
 import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
@@ -25,10 +21,9 @@ import rehypeUnwrapImages from "rehype-unwrap-images";
 // Defaults to root; the deploy workflow sets BASE_PATH for subpath hosts
 // (GitHub Pages project sites). See "Base path" in the README.
 const BASE_PATH = process.env.BASE_PATH || "/";
-const START_URL = BASE_PATH.endsWith("/") ? BASE_PATH : `${BASE_PATH}/`;
 
 export default defineConfig({
-	site: "https://anjaygoel.github.io",
+	site: "https://thom.wtf",
 	base: BASE_PATH,
 	image: {
 		domains: ["webmention.io"],
@@ -39,53 +34,13 @@ export default defineConfig({
 		inlineStylesheets: "always",
 	},
 	integrations: [
-		partytown({
-			config: {
-				forward: ["dataLayer.push"],
-			},
-		}),
-		expressiveCode(expressiveCodeOptions),
 		icon(),
+		expressiveCode(expressiveCodeOptions),
 		sitemap({
 			changefreq: "weekly",
 			priority: 0.7,
-			lastmod: new Date(),
 		}),
 		mdx(),
-		robotsTxt(),
-		webmanifest({
-			// See: https://github.com/alextim/astro-lib/blob/main/packages/astro-webmanifest/README.md
-			name: siteConfig.title,
-			description: siteConfig.description,
-			lang: siteConfig.lang,
-			icon: "public/icon.png",
-			icons: [
-				{
-					src: "icons/apple-touch-icon.png",
-					sizes: "180x180",
-					type: "image/png",
-				},
-				{
-					src: "icons/icon-192.png",
-					sizes: "192x192",
-					type: "image/png",
-				},
-				{
-					src: "icons/icon-512.png",
-					sizes: "512x512",
-					type: "image/png",
-				},
-			],
-			start_url: START_URL,
-			background_color: "#1d1f21",
-			theme_color: "#2bbc8a",
-			display: "standalone",
-			config: {
-				insertFaviconLinks: false,
-				insertThemeColorMeta: false,
-				insertManifestLink: false,
-			},
-		}),
 		(await import("@playform/compress")).default(),
 	],
 	// Astro 7 defaults to Sätteri; opt back into remark/rehype. Plugins go
@@ -101,7 +56,7 @@ export default defineConfig({
 				[
 					rehypeExternalLinks,
 					{
-						rel: ["nofollow, noreferrer"],
+						rel: ["nofollow", "noopener", "noreferrer"],
 						target: "_blank",
 					},
 				],
@@ -127,7 +82,7 @@ export default defineConfig({
 function rawFonts(ext: string[]) {
 	return {
 		name: "vite-plugin-raw-fonts",
-		// @ts-expect-error:next-line
+		// @ts-expect-error
 		transform(_, id) {
 			if (ext.some((e) => id.endsWith(e))) {
 				const buffer = fs.readFileSync(id);
