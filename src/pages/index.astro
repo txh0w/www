@@ -1,202 +1,81 @@
 ---
-import { getAllPosts, getPostSortDate, sortMDByDate } from "@/data/post";
+import { getAllPosts, sortMDByDate } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 import { siteConfig, socials } from "@/site-config";
 import { Icon } from "astro-icon/components";
-import { absoluteUrl, withBase } from "@/utils/path";
-import { Schema } from "astro-seo-schema";
+import { withBase } from "@/utils/path";
+import { Image } from "astro:assets";
 
 const allPosts = await getAllPosts();
 const allPostsByDate = sortMDByDate(allPosts);
-const TIMELINE_LIMIT = 5;
-const timelinePosts = allPostsByDate.slice(0, TIMELINE_LIMIT);
-const featured = timelinePosts[0];
-const rest = timelinePosts.slice(1);
+const LATEST_COUNT = 3;
+const latestPosts = allPostsByDate.slice(0, LATEST_COUNT);
 const archiveCount = allPosts.length;
 
-const profile = siteConfig.profile;
-const siteUrl = (path: string) => absoluteUrl(path, Astro.site);
+const handle =
+  siteConfig.profile?.github?.split("/").pop() ??
+  siteConfig.author.toLowerCase();
 
-const featuredDate = featured ? getPostSortDate(featured) : null;
-const featuredIso = featuredDate ? featuredDate.toISOString() : "";
-const featuredLabel = featuredDate ? featuredDate.toLocaleDateString("pt-PT") : "";
+const postsLabel =
+  archiveCount === 1 ? "publicação" : "publicações";
 ---
 
-<Schema
-	item={{
-		"@context": "https://schema.org",
-		"@type": "BreadcrumbList",
-		itemListElement: [
-			{
-				"@type": "ListItem",
-				position: 1,
-				name: "Início",
-				item: siteUrl("/"),
-			},
-			{
-				"@type": "ListItem",
-				position: 2,
-				name: "Sobre",
-				item: siteUrl("/about"),
-			},
-			{
-				"@type": "ListItem",
-				position: 3,
-				name: "Publicações",
-				item: siteUrl("/posts"),
-			},
-		],
-	}}
-/>
-
 <PageLayout meta={{ title: "Início", description: siteConfig.description }}>
-	<section class="hero mb-[76px] max-[720px]:mb-14 max-[420px]:mb-12">
-		<div class="hero-header mb-4 flex items-center gap-4 max-[420px]:gap-3">
-			{
-				profile?.avatar && (
-					<img
-						src={profile.avatar}
-						alt={siteConfig.author}
-						class="avatar border-hairline motion-safe:ease hover:border-accent h-14 w-14 flex-shrink-0 rounded-full border object-cover hover:-translate-y-px motion-safe:transition-all motion-safe:duration-[0.2s] max-[420px]:h-[46px] max-[420px]:w-[46px]"
-						style="box-shadow: 0 0 0 3px hsl(var(--theme-bg))"
-						width="56"
-						height="56"
-					/>
-				)
-			}
-			<div class="hero-title flex flex-col gap-1">
-				<h1
-					class="text-text m-0 font-serif leading-[0.95] font-bold tracking-[-0.05em] [text-wrap:balance]"
-					style="font-size: clamp(2.2rem, 6vw, 4.2rem)"
-				>
-					{siteConfig.author}
-				</h1>
-				<span
-					class="text-accent font-mono text-[10.5px] tracking-[0.12em] lowercase max-[420px]:text-[10px]"
-					>everything is going to be okay...</span
-				>
-			</div>
-		</div>
-		<p
-			class="text-text mt-0 mb-[22px] max-w-[60ch] text-[18px] leading-[1.65] [text-wrap:pretty] [white-space:pre-line] max-[720px]:text-[18px] max-[420px]:text-[17px]"
-		>
-			{siteConfig.description}
-		</p>
-		<div
-			class="socials text-text/72 mt-4 flex flex-wrap items-center gap-[10px] font-sans text-[13px] max-[420px]:text-[12.5px]"
-		>
-			{
-				socials.map((s, i) => (
-					<>
-						<a
-							href={s.url}
-							rel="noreferrer"
-							target="_blank"
-							aria-label={s.name}
-							class="text-text-muted motion-safe:ease hover:text-accent motion-safe:transition-colors motion-safe:duration-[0.2s]"
-						>
-							<Icon name={s.icon} size={18} />
-						</a>
-					</>
-				))
-			}
-		</div>
-	</section>
+  <div class="linktree">
+    <Image
+      src={siteConfig.profile?.avatar ?? "/avatar.webp"}
+      alt={`Foto de perfil de ${siteConfig.author}`}
+      class="linktree-avatar"
+      width="96"
+      height="96"
+      loading="eager"
+      decoding="async"
+    />
+    <span class="linktree-handle">@{handle}</span>
+    <h1 class="linktree-name">{siteConfig.author}</h1>
+    <p class="linktree-tagline">{siteConfig.description}</p>
 
-	<section class="writing mb-[84px] max-[420px]:mb-16" aria-labelledby="writing-label">
-		<div class="section-label" id="writing-label">escritos</div>
-		<div class="timeline">
-			{
-				featured && (
-					<a
-						class="post featured"
-						data-astro-prefetch
-						href={withBase(`/posts/${featured.id}/`)}
-						style="--i: 0"
-					>
-						<div class="post-rail max-md:hidden">
-							<time class="post-date" datetime={featuredIso}>
-								{featuredLabel}
-							</time>
-							<span class="post-dot" aria-hidden="true" />
-						</div>
-						<div class="post-body max-md:border-hairline pb-14 max-md:mb-1 max-md:border-b max-md:pb-6">
-							<div class="post-stamp text-accent mb-3 font-mono text-[10.5px] tracking-[0.12em] lowercase">
-								mais recente · {featuredLabel}
-							</div>
-							<h2
-								class="post-title text-text m-0 mb-[14px] leading-[1.14] font-medium tracking-[-0.03em] [text-wrap:balance] [word-wrap:break-word] max-[420px]:text-[17px] max-md:mb-[10px] max-md:text-[22px] max-md:leading-[1.2] max-md:tracking-[-0.015em]"
-								style="font-size: clamp(1.8rem, 4vw, 2.4rem)"
-							>
-								{featured.data.title}
-							</h2>
-							<p class="post-excerpt text-text-muted m-0 mb-4 max-w-[58ch] text-[18px] leading-[1.62] [overflow-wrap:break-word] [word-wrap:break-word] max-[420px]:text-[15px] max-md:mb-[10px] max-md:text-[15.5px] max-md:leading-[1.55]">
-								{featured.data.description}
-							</p>
-							{!!featured.data.tags?.length && (
-								<div class="post-meta text-text/72 font-mono [font-feature-settings:'tnum'] text-[11.5px] [font-variant-numeric:tabular-nums] max-md:text-[11px]">
-									{featured.data.tags.map((t, i) => (
-										<Fragment>
-											{i > 0 && <span class="dot text-faint mx-2">·</span>}
-											<span>{t}</span>
-										</Fragment>
-									))}
-								</div>
-							)}
-						</div>
-					</a>
-				)
-			}
+    <nav class="linktree-links" aria-label="Redes sociais">
+      {
+        socials.map((s, index) => (
+          <a
+            href={s.url}
+            target="_blank"
+            rel="noreferrer noopener"
+            class="linktree-btn"
+            aria-label={s.name}
+            data-index={index}
+          >
+            <Icon name={s.icon} size={20} aria-hidden="true" />
+            <span>{s.name}</span>
+          </a>
+        ))
+      }
+    </nav>
 
-			{
-				rest.map((p, idx) => (
-					<a
-						class="post"
-						data-astro-prefetch
-						href={withBase(`/posts/${p.id}/`)}
-						style={`--i: ${idx + 1}`}
-					>
-						<div class="post-rail">
-							<time class="post-date" datetime={getPostSortDate(p).toISOString()}>
-								{getPostSortDate(p).toLocaleDateString("pt-PT")}
-							</time>
-							<span class="post-dot" aria-hidden="true" />
-						</div>
-						<div class="post-body">
-							<h3 class="post-title">{p.data.title}</h3>
-							<p class="post-preview">{p.data.description}</p>
-						</div>
-					</a>
-				))
-			}
-
-			<div class="archive-link text-text/72 col-start-2 mt-2 font-sans text-[13.5px] max-md:mt-0">
-				<a
-					data-astro-prefetch
-					href={withBase("/posts/")}
-					class="text-text-muted decoration-text/35 motion-safe:ease hover:text-accent hover:decoration-accent inline-block px-0 py-[6px] underline decoration-1 underline-offset-[3px] hover:translate-x-0.5 motion-safe:transition-all motion-safe:duration-[0.2s]"
-				>
-					ver todas as {archiveCount} publicações →
-				</a>
-			</div>
-		</div>
-	</section>
+    {
+      latestPosts.length > 0 && (
+        <section class="linktree-latest" aria-label="Escritos recentes">
+          <span class="linktree-latest-label">escritos recentes</span>
+          <ul class="linktree-latest-list">
+            {latestPosts.map((p, index) => (
+              <li>
+                <a
+                  href={withBase(`/posts/${p.id}/`)}
+                  class="linktree-post"
+                  data-astro-prefetch
+                  data-index={index}
+                >
+                  {p.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href={withBase("/posts/")} class="linktree-all" data-astro-prefetch>
+            ver todas as {archiveCount} {postsLabel} →
+          </a>
+        </section>
+      )
+    }
+  </div>
 </PageLayout>
-
-<style>
-	.socials a:focus-visible,
-	.archive-link a:focus-visible {
-		outline: 2px solid hsl(var(--theme-accent));
-		outline-offset: 3px;
-		border-radius: 3px;
-	}
-
-	.post.featured .post-dot {
-		--rail-dot-size: 11px;
-		border-color: hsl(var(--theme-text-muted));
-	}
-	.post.featured:hover .post-dot {
-		background: hsl(var(--theme-accent));
-		border-color: hsl(var(--theme-accent));
-	}
-</style>

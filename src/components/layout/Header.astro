@@ -6,47 +6,92 @@ import { Icon } from "astro-icon/components";
 const url = new URL(Astro.request.url);
 const wordmark = siteConfig.title;
 
+const normalize = (path: string) => (path.endsWith("/") ? path : `${path}/`);
+
 const isActive = (path: string) => {
 	const target = withBase(path);
 	if (path === "/") return url.pathname === target;
-	return url.pathname === target || url.pathname.startsWith(target);
+	return (
+		normalize(url.pathname) === normalize(target) ||
+		url.pathname.startsWith(normalize(target))
+	);
 };
 ---
 
-<header
-	class="site-header border-hairline/80 mb-16 flex items-center justify-between gap-8 border-b pb-6 max-[420px]:mb-8 max-md:mb-10 max-md:flex-col max-md:items-start max-md:gap-4"
-	id="main-header"
->
-	<a
-		href={withBase("/")}
-		class="wordmark text-text hover:text-accent font-serif text-[18px] font-medium tracking-[-0.02em] italic no-underline transition-colors duration-200 max-[420px]:text-[17px]"
-	>
-		{wordmark}
-	</a>
-	<div class="header-right flex items-center gap-6">
-		<nav
-			class="nav text-text/60 flex items-center gap-5 font-mono text-[12px] tracking-[0.08em] max-md:flex-wrap max-md:gap-4"
-			aria-label="Primary"
-		>
-			{
-				menuLinks.map((link) => (
-					<a
-						aria-current={isActive(link.path) ? "page" : false}
-						class:list={[
-							"hover:text-accent relative inline-flex items-center gap-1.5 px-0 pb-[3px] no-underline transition-colors duration-200",
-							{
-								"text-text after:bg-accent after:absolute after:right-0 after:-bottom-px after:left-0 after:h-px":
-									isActive(link.path),
-							},
-						]}
-						data-astro-prefetch
-						href={withBase(link.path)}
-					>
-						<Icon name={link.icon} size={13} class="opacity-80" />
-						<span>{link.title}</span>
-					</a>
-				))
-			}
-		</nav>
+<header class="site-header" id="main-header">
+	<div class="header-bar">
+		<a href={withBase("/")} class="wordmark" aria-label={`${wordmark} — início`}>
+			{wordmark}
+		</a>
+		<button class="hamburger" type="button" aria-label="Abrir menu" aria-expanded="false">
+			<span></span>
+			<span></span>
+			<span></span>
+		</button>
+	</div>
+	<div class="header-nav">
+		<div class="header-nav-inner">
+			<nav aria-label="Navegação principal">
+				<ul class="nav-list">
+					{
+						menuLinks.map((link, i) => (
+							<li style={`--i: ${i}`}>
+								<a
+									aria-current={isActive(link.path) ? "page" : false}
+									class:list={["nav-link", { active: isActive(link.path) }]}
+									data-astro-prefetch
+									href={withBase(link.path)}
+								>
+									<Icon name={link.icon} size={13} aria-hidden="true" />
+									<span>{link.title}</span>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+		</div>
 	</div>
 </header>
+
+<script>
+	const header = document.getElementById("main-header");
+	const toggle = header?.querySelector<HTMLButtonElement>(".hamburger");
+
+	toggle?.addEventListener("click", () => {
+		const isOpen = header.classList.toggle("is-open");
+		toggle.setAttribute("aria-expanded", String(isOpen));
+		toggle.setAttribute("aria-label", isOpen ? "Fechar menu" : "Abrir menu");
+	});
+
+	window.addEventListener("resize", () => {
+		if (window.innerWidth > 768 && header?.classList.contains("is-open")) {
+			header.classList.remove("is-open");
+			toggle?.setAttribute("aria-expanded", "false");
+			toggle?.setAttribute("aria-label", "Abrir menu");
+		}
+	});
+
+	document.addEventListener("click", (e) => {
+		if (header && e.target instanceof Node && !header.contains(e.target)) {
+			header.classList.remove("is-open");
+			toggle?.setAttribute("aria-expanded", "false");
+			toggle?.setAttribute("aria-label", "Abrir menu");
+		}
+	});
+
+	document.addEventListener("keydown", (e) => {
+		if (e.key === "Escape" && header?.classList.contains("is-open")) {
+			header.classList.remove("is-open");
+			toggle?.setAttribute("aria-expanded", "false");
+			toggle?.setAttribute("aria-label", "Abrir menu");
+			toggle?.focus();
+		}
+	});
+
+	document.addEventListener("astro:before-swap", () => {
+		header?.classList.remove("is-open");
+		toggle?.setAttribute("aria-expanded", "false");
+		toggle?.setAttribute("aria-label", "Abrir menu");
+	});
+</script>

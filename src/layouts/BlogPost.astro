@@ -29,7 +29,7 @@ const {
 
 const ogImageUrl = ogImage
 	? absoluteUrl(withBase(ogImage), Astro.site)
-	: absoluteUrl(withBase(`/og-image/${slug}.png`), Astro.site);
+	: absoluteUrl(withBase(`/og-image/posts/${slug}.png`), Astro.site);
 const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString();
 const { remarkPluginFrontmatter } = await render(post);
 

@@ -18,21 +18,21 @@ export const siteConfig: SiteConfig = {
 	sortPostsByUpdatedDate: false,
 	title: "thom's space",
 	hideThemeCredit: false,
-	// Handle do X/Twitter usado em twitter:site (ex: "@seublog"). Deixe undefined se não tiver.
-	twitterHandle: "@xth0w",
+	defaultOgImage: "/avatar.webp",
+	twitterHandle: "@txh0w",
 	profile: {
 		name: "Thom",
 		email: "hello@thom.wtf",
-		github: "https://github.com/xth0w",
+		github: "https://github.com/txh0w",
 		avatar: "/avatar.webp",
 	},
 };
 
 export const socials: SocialLink[] = [
-	{ name: "X", url: "https://x.com/xth0w", icon: "simple-icons:x" },
-	{ name: "Instagram", url: "https://instagram.com/xth0w", icon: "ph:instagram-logo-duotone" },
-	{ name: "Reddit", url: "https://reddit.com/user/xth0w", icon: "ph:reddit-logo-duotone" },
-	{ name: "guns.lol", url: "https://guns.lol/xth0w", icon: "hugeicons:gun" },
+	{ name: "X", url: "https://x.com/txh0w", icon: "simple-icons:x" },
+	{ name: "Instagram", url: "https://instagram.com/txh0w", icon: "ph:instagram-logo-duotone" },
+	{ name: "Reddit", url: "https://reddit.com/user/txh0w", icon: "ph:reddit-logo-duotone" },
+	{ name: "guns.lol", url: "https://guns.lol/txh0w", icon: "hugeicons:gun" },
 	{ name: "Email", url: "mailto:hello@thom.wtf", icon: "si:mail-duotone" },
 ];
 

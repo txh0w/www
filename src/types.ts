@@ -43,6 +43,8 @@ export interface SiteConfig {
 	title: string;
 	/** Personal info for About page, schema, byline. */
 	profile?: ProfileConfig;
+	/** Default OG image path (e.g. "/default-og.png"). Used as fallback when no page-specific ogImage is set. */
+	defaultOgImage?: string;
 	/** X/Twitter handle for twitter:site meta tag, e.g. "@seublog". Omit to skip the tag. */
 	twitterHandle?: string;
 	hideThemeCredit?: boolean;
