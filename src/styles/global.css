@@ -33,7 +33,7 @@
 		--rail-gap: 36px; /* gap between rail and post body */
 
 		color-scheme: dark;
-		--theme-bg: #191f1a; /* #131110 */
+		--theme-bg: #000000;
 		--theme-text: 42deg 35% 92%; /* #f4f0e3 */
 		--theme-text-muted: 36deg 18% 73%; /* #c8c1ae */
 		--theme-accent: 145deg 28% 62%; /* #c89761 */
@@ -655,7 +655,10 @@
 	border-radius: 50%;
 	object-fit: cover;
 	border: 1px solid var(--hairline);
-	box-shadow: 0 0 0 4px var(--paper), 0 0 0 5px var(--hairline), 0 0 48px hsl(var(--theme-accent) / 0.08);
+	box-shadow:
+		0 0 0 4px var(--paper),
+		0 0 0 5px var(--hairline),
+		0 0 48px hsl(var(--theme-accent) / 0.08);
 	margin-bottom: 16px;
 }
 
@@ -723,7 +726,7 @@
 	background: var(--accent-soft);
 	color: hsl(var(--theme-accent));
 	transform: translateY(-2px);
-	box-shadow: 0 8px 28px hsl(var(--theme-accent) / 0.10);
+	box-shadow: 0 8px 28px hsl(var(--theme-accent) / 0.1);
 }
 
 .linktree-btn:active {
@@ -823,26 +826,54 @@
 	.linktree > * {
 		animation: linktree-fade-up 420ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
 	}
-	.linktree > *:nth-child(1) { animation-delay: 0ms; }
-	.linktree > *:nth-child(2) { animation-delay: 40ms; }
-	.linktree > *:nth-child(3) { animation-delay: 80ms; }
-	.linktree > *:nth-child(4) { animation-delay: 120ms; }
+	.linktree > *:nth-child(1) {
+		animation-delay: 0ms;
+	}
+	.linktree > *:nth-child(2) {
+		animation-delay: 40ms;
+	}
+	.linktree > *:nth-child(3) {
+		animation-delay: 80ms;
+	}
+	.linktree > *:nth-child(4) {
+		animation-delay: 120ms;
+	}
 	.linktree > .linktree-links {
 		animation: none;
 	}
 	.linktree > .linktree-links > * {
 		animation: linktree-fade-up 400ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
 	}
-	.linktree > .linktree-links > *:nth-child(1) { animation-delay: 160ms; }
-	.linktree > .linktree-links > *:nth-child(2) { animation-delay: 200ms; }
-	.linktree > .linktree-links > *:nth-child(3) { animation-delay: 240ms; }
-	.linktree > .linktree-links > *:nth-child(4) { animation-delay: 280ms; }
-	.linktree > .linktree-links > *:nth-child(5) { animation-delay: 320ms; }
-	.linktree > .linktree-latest > *:nth-child(1) { animation-delay: 360ms; }
-	.linktree > .linktree-latest > *:nth-child(2) { animation-delay: 400ms; }
-	.linktree > .linktree-latest > *:nth-child(3) { animation-delay: 440ms; }
-	.linktree > .linktree-latest > *:nth-child(4) { animation-delay: 480ms; }
-	.linktree > .linktree-latest > *:nth-child(5) { animation-delay: 520ms; }
+	.linktree > .linktree-links > *:nth-child(1) {
+		animation-delay: 160ms;
+	}
+	.linktree > .linktree-links > *:nth-child(2) {
+		animation-delay: 200ms;
+	}
+	.linktree > .linktree-links > *:nth-child(3) {
+		animation-delay: 240ms;
+	}
+	.linktree > .linktree-links > *:nth-child(4) {
+		animation-delay: 280ms;
+	}
+	.linktree > .linktree-links > *:nth-child(5) {
+		animation-delay: 320ms;
+	}
+	.linktree > .linktree-latest > *:nth-child(1) {
+		animation-delay: 360ms;
+	}
+	.linktree > .linktree-latest > *:nth-child(2) {
+		animation-delay: 400ms;
+	}
+	.linktree > .linktree-latest > *:nth-child(3) {
+		animation-delay: 440ms;
+	}
+	.linktree > .linktree-latest > *:nth-child(4) {
+		animation-delay: 480ms;
+	}
+	.linktree > .linktree-latest > *:nth-child(5) {
+		animation-delay: 520ms;
+	}
 }
 
 @media (max-width: 720px) {

@@ -31,7 +31,7 @@ export const siteConfig: SiteConfig = {
 export const socials: SocialLink[] = [
 	{ name: "X", url: "https://x.com/txh0w", icon: "simple-icons:x" },
 	{ name: "Instagram", url: "https://instagram.com/txh0w", icon: "ph:instagram-logo-duotone" },
-	{ name: "Reddit", url: "https://reddit.com/user/txh0w", icon: "ph:reddit-logo-duotone" },
+	{ name: "Github", url: "https://github.com/txh0w", icon: "simple-icons:github" },
 	{ name: "guns.lol", url: "https://guns.lol/txh0w", icon: "hugeicons:gun" },
 	{ name: "Email", url: "mailto:hello@thom.wtf", icon: "si:mail-duotone" },
 ];
